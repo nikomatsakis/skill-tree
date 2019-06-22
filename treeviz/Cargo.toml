@@ -1,0 +1,11 @@
+[package]
+name = "treeviz"
+version = "0.1.0"
+authors = ["Niko Matsakis <niko@alum.mit.edu>"]
+edition = "2018"
+
+[dependencies]
+paw = "1.0"
+serde = "1.0"
+serde_derive = "1.0"
+toml = "0.5.1"
