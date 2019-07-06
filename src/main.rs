@@ -19,4 +19,3 @@ fn main(args: paw::Args) -> Fallible<()> {
 
     Ok(())
 }
-

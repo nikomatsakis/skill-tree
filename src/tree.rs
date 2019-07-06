@@ -19,4 +19,3 @@ pub(crate) struct Item {
     pub(crate) name: String,
     pub(crate) width: Option<f64>,
 }
-
