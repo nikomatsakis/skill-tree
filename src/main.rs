@@ -1,8 +1,10 @@
+use std::fs::File;
 use std::path::PathBuf;
 
+mod graphviz;
 mod tree;
 
-type Fallible<T> = Result<T, Box<std::error::Error>>;
+type Fallible<T> = Result<T, Box<dyn std::error::Error>>;
 
 #[paw::main]
 fn main(args: paw::Args) -> Fallible<()> {
@@ -15,6 +17,11 @@ fn main(args: paw::Args) -> Fallible<()> {
         let output_path = path.with_extension("dot");
         println!("{:#?}", skill_tree);
         println!("{:#?}", output_path);
+
+        skill_tree.validate()?;
+
+        let mut file = File::create(output_path)?;
+        graphviz::write_graphviz(&skill_tree, &mut file)?;
     }
 
     Ok(())
