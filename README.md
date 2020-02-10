@@ -37,4 +37,12 @@ like so (you have to have installed [graphviz])
 
 which will generate an SVG file ([example](tree-data/traits.svg)).
 
+## Next steps
 
+I should, of course, create a skill-tree for this project-- but the
+goal is to make this something that can be readily dropped into a
+working group repository (like [wg-traits]) and used to track the
+overall progress and plans of a project. The workflow isn't *quite*
+drag and drop enough for that yet, but we're close!
+
+[wg-traits]: https://github.com/rust-lang/wg-traits
