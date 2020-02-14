@@ -3,6 +3,10 @@ name = "treeviz"
 version = "0.1.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2018"
+description = "generate graphviz files to show roadmaps"
+license = "MIT"
+repository = "https://github.com/nikomatsakis/skill-tree"
+homepage = "https://github.com/nikomatsakis/skill-tree"
 
 [dependencies]
 clap = "2.33.0"
