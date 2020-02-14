@@ -11,4 +11,7 @@ script:
 - cargo run -- tree-data/example.toml output
 deploy:
   provider: pages:git
-  deploy_key: "<deploy_key>"
+  deploy_key: "deploy-key-skill-tree"
+before_install:
+- openssl aes-256-cbc -K $encrypted_d7b9fac2d740_key -iv $encrypted_d7b9fac2d740_iv
+  -in deploy-key-skill-tree.enc -out deploy-key-skill-tree -d
