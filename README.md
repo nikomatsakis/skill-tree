@@ -12,6 +12,10 @@ time I'd seen it used that way).
 
 [wasm]: https://hacks.mozilla.org/2018/10/webassemblys-post-mvp-future/
 
+## Example
+
+
+
 ## How does this project work?
 
 You create a [TOML file](tree-data/traits.toml) that defines the
@@ -23,19 +27,17 @@ file](tree-data/traits.toml).
 You then run the tool like so:
 
 ```bash
-> cargo run -- tree-data/traits.toml
+> cargo run -- tree-data/traits.toml output
 ```
 
-This will generate a `tree-data/traits.dot` file. This file can be rendered to an SVG
-like so (you have to have installed [graphviz])
+This will generate a directory `output` that contains various
+javascript and dot files. If you view `output/skill-tree.html` you
+will get a view of the complete skill tree. You can also load
+`output/skill-tree.js` (along with the `viz.js` scripts) and execute
+the skill tree from some context of your own.
 
-[graphviz]: https://www.graphviz.org/
-
-```bash
-> dot -Tsvg tree-data/traits.dot  > traits.svg
-```
-
-which will generate an SVG file ([example](tree-data/traits.svg)).
+In particular, `output/skill-tree.dot` is your graphviz file that you
+can use to render on your own if you prefer.
 
 ## Next steps
 
