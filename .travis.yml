@@ -1,0 +1,11 @@
+language: rust
+rust:
+  - stable
+  - nightly
+jobs:
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
+cache: cargo
+script:
+  - cargo run -- tree-data/example.toml output
