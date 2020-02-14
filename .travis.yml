@@ -1,11 +1,14 @@
 language: rust
 rust:
-  - stable
-  - nightly
+- stable
+- nightly
 jobs:
   allow_failures:
-    - rust: nightly
+  - rust: nightly
   fast_finish: true
 cache: cargo
 script:
-  - cargo run -- tree-data/example.toml output
+- cargo run -- tree-data/example.toml output
+deploy:
+  provider: pages:git
+  deploy_key: "<deploy_key>"
