@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+
+  <script src="viz.js"></script>
+  <script src="full.render.js"></script>
+  <script>
+    var viz = new Viz();
+    fetch('skill-tree.dot')
+      .then(response => response.text())
+  .then(text => {
+    viz.renderSVGElement(text)
+          .then(element => { document.body.appendChild(element); })
+      });
+  </script>
+
+</body>
+</html>
