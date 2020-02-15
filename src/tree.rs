@@ -1,4 +1,4 @@
-use crate::Fallible;
+use fehler::throws;
 use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -25,18 +25,19 @@ pub(crate) struct Item {
 }
 
 impl SkillTree {
-    pub(crate) fn validate(&self) -> Fallible<()> {
+    #[throws(anyhow::Error)]
+    pub(crate) fn validate(&self) {
         // gather: valid requires entries
 
         for group in &self.group {
             group.validate()?;
         }
-        Ok(())
     }
 }
 
 impl Group {
-    pub(crate) fn validate(&self) -> Fallible<()> {
+    #[throws(anyhow::Error)]
+    pub(crate) fn validate(&self) {
         // check: that `name` is a valid graphviz identifier
 
         // check: each of the things in requires has the form
@@ -46,19 +47,16 @@ impl Group {
         for item in &self.items {
             item.validate()?;
         }
-
-        Ok(())
     }
 }
 
 impl Item {
-    pub(crate) fn validate(&self) -> Fallible<()> {
+    #[throws(anyhow::Error)]
+    pub(crate) fn validate(&self) {
         // check: each of the things in requires has the form
         //        `identifier` or `identifier:port` and that all those
         //        identifiers map to groups
 
         // check: if you have a non-empty `requires`, must have a port
-
-        Ok(())
     }
 }

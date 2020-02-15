@@ -9,7 +9,9 @@ repository = "https://github.com/nikomatsakis/skill-tree"
 homepage = "https://github.com/nikomatsakis/skill-tree"
 
 [dependencies]
+anyhow = "1.0"
 clap = "2.33.0"
+fehler = "1.0.0-alpha.2"
 rust-embed = "5.2.0"
 structopt = "0.3.9"
 serde = "1.0"

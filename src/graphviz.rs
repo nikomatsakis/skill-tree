@@ -1,8 +1,9 @@
 use crate::tree::{Group, SkillTree};
-use crate::Fallible;
+use fehler::throws;
 use std::io::Write;
 
-pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) -> Fallible<()> {
+#[throws(anyhow::Error)]
+pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     writeln!(output, r#"digraph g {{"#)?;
     writeln!(output, r#"graph [ rankdir = "LR" ];"#)?;
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
@@ -44,10 +45,10 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) -> Fallib
     }
 
     writeln!(output, r#"}}"#)?;
-    Ok(())
 }
 
-fn write_group_label(group: &Group, output: &mut dyn Write) -> Fallible<()> {
+#[throws(anyhow::Error)]
+fn write_group_label(group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
@@ -69,7 +70,6 @@ fn write_group_label(group: &Group, output: &mut dyn Write) -> Fallible<()> {
     }
 
     writeln!(output, r#"  </table>>"#)?;
-    Ok(())
 }
 
 fn port_name(requires: &str) -> String {
