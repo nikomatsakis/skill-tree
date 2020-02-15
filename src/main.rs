@@ -29,8 +29,8 @@ fn main() {
     let opts: Opts = Opts::from_args();
 
     // Load the skill tree
-    let skill_tree_text = std::fs::read_to_string(&opts.skill_tree)?;
-    let skill_tree: tree::SkillTree = toml::from_str(&skill_tree_text)?;
+    let skill_tree = load_skill_tree(&opts.skill_tree)
+        .with_context(|| format!("loading skill tree from `{}`", opts.skill_tree.display()))?;
 
     // Validate it for errors.
     skill_tree.validate()?;
@@ -51,6 +51,12 @@ fn main() {
         write_static_file(&output_path, file_text)
             .with_context(|| format!("creating static file `{}`", output_path.display()))?;
     }
+}
+
+#[throws(anyhow::Error)]
+fn load_skill_tree(path: &Path) -> tree::SkillTree {
+    let skill_tree_text = std::fs::read_to_string(path)?;
+    toml::from_str(&skill_tree_text)?
 }
 
 #[throws(anyhow::Error)]
