@@ -33,6 +33,10 @@ impl SkillTree {
             group.validate()?;
         }
     }
+
+    pub(crate) fn groups(&self) -> impl Iterator<Item = &Group> {
+        self.group.iter()
+    }
 }
 
 impl Group {
@@ -47,6 +51,10 @@ impl Group {
         for item in &self.items {
             item.validate()?;
         }
+    }
+
+    pub(crate) fn items(&self) -> impl Iterator<Item = &Item> {
+        self.items.iter()
     }
 }
 

@@ -9,7 +9,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
     writeln!(output, r#"edge [ ];"#)?;
 
-    for group in &tree.group {
+    for group in tree.groups() {
         writeln!(output, r#""{}" ["#, group.name)?;
         write_group_label(group, output)?;
         writeln!(output, r#"  shape = "none""#)?;
@@ -17,7 +17,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
         writeln!(output, r#"]"#)?;
     }
 
-    for group in &tree.group {
+    for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
                 writeln!(
@@ -29,7 +29,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
             }
         }
 
-        for item in &group.items {
+        for item in group.items() {
             if let Some(requires) = &item.requires {
                 for requirement in requires {
                     writeln!(
