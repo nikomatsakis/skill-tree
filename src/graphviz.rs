@@ -85,8 +85,8 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         let href = attribute_str("href", &item.href, "");
         let start_under = if item.href.is_some() { "<u>" } else { "" };
         let end_under = if item.href.is_some() { "</u>" } else { "" };
-        let port_in = attribute_str("port", &item.port, "in");
-        let port_out = attribute_str("port", &item.port, "out");
+        let port_in = attribute_str("port", &item.port, "_in");
+        let port_out = attribute_str("port", &item.port, "_out");
         writeln!(
             output,
             "    \
