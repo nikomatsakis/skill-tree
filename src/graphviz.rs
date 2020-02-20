@@ -1,4 +1,4 @@
-use crate::tree::{Group, SkillTree, Status};
+use crate::tree::{Goal, Group, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
@@ -17,14 +17,24 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
         writeln!(output, r#"]"#)?;
     }
 
+    for goal in tree.goals() {
+        writeln!(output, r#""{}" ["#, goal.name)?;
+        write_goal_label(goal, output)?;
+        writeln!(output, r#"  shape = "note""#)?;
+        writeln!(output, r#"  margin = 0"#)?;
+        writeln!(output, r#"  style = "filled""#)?;
+        writeln!(output, r#"  fillcolor = "darkgoldenrod""#)?;
+        writeln!(output, r#"]"#)?;
+    }
+
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
                 writeln!(
                     output,
                     r#"{} -> {};"#,
-                    port_name(requirement, "out"),
-                    port_name(&group.name, "in"),
+                    tree.port_name(requirement, "out"),
+                    tree.port_name(&group.name, "in"),
                 )?;
             }
         }
@@ -35,7 +45,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
                     writeln!(
                         output,
                         r#"{} -> "{}":{};"#,
-                        port_name(requirement, "out"),
+                        tree.port_name(requirement, "out"),
                         group.name,
                         item.port.as_ref().expect("missing port"),
                     )?;
@@ -44,15 +54,32 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
         }
     }
 
+    for goal in tree.goals() {
+        if let Some(requires) = &goal.requires {
+            for requirement in requires {
+                writeln!(
+                    output,
+                    r#"{} -> {};"#,
+                    tree.port_name(requirement, "out"),
+                    tree.port_name(&goal.name, "in"),
+                )?;
+            }
+        }
+    }
+
     writeln!(output, r#"}}"#)?;
 }
 
-const STOP_SIGN_EMOJI: &str = "🛑";
 const WATCH_EMOJI: &str = "⌚";
-const BALLOT_BOX_EMOJI: &str = "☐";
 const HAMMER_WRENCH_EMOJI: &str = "🛠️";
 const CHECKED_BOX_EMOJI: &str = "☑️";
 const RAISED_HAND_EMOJI: &str = "🙋";
+
+#[throws(anyhow::Error)]
+fn write_goal_label(goal: &Goal, output: &mut dyn Write) {
+    let label = goal.label.as_ref().unwrap_or(&goal.name);
+    writeln!(output, r#"  label = "{label}""#, label = label)?;
+}
 
 #[throws(anyhow::Error)]
 fn write_group_label(group: &Group, output: &mut dyn Write) {
@@ -113,19 +140,24 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  </table>>"#)?;
 }
 
-fn port_name(requires: &str, mode: &str) -> String {
-    if let Some(index) = requires.find(":") {
-        let name = &requires[..index];
-        let port = &requires[index + 1..];
-        format!(r#""{}":{}_{}"#, name, port, mode)
-    } else {
-        format!(r#""{}":all"#, requires)
-    }
-}
-
 fn attribute_str(label: &str, text: &Option<impl AsRef<str>>, suffix: &str) -> String {
     match text {
         None => format!(""),
         Some(t) => format!(" {}=\"{}{}\"", label, t.as_ref(), suffix),
+    }
+}
+
+impl SkillTree {
+    fn port_name(&self, requires: &str, mode: &str) -> String {
+        if let Some(index) = requires.find(":") {
+            let name = &requires[..index];
+            let port = &requires[index + 1..];
+            format!(r#""{}":{}_{}"#, name, port, mode)
+        } else if self.is_goal(requires) {
+            // Goals don't have ports, so we don't need a `:all`
+            format!(r#""{}""#, requires)
+        } else {
+            format!(r#""{}":all"#, requires)
+        }
     }
 }

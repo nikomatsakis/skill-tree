@@ -4,13 +4,21 @@ use serde_derive::Deserialize;
 #[derive(Debug, Deserialize)]
 pub(crate) struct SkillTree {
     pub(crate) group: Vec<Group>,
+    pub(crate) goal: Option<Vec<Goal>>,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct Goal {
+    pub(crate) name: String,
+    pub(crate) label: Option<String>,
+    pub(crate) requires: Option<Vec<String>>,
+    pub(crate) href: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Group {
     pub(crate) name: String,
     pub(crate) label: Option<String>,
-    pub(crate) application: Option<String>,
     pub(crate) requires: Option<Vec<String>>,
     pub(crate) items: Vec<Item>,
     pub(crate) width: Option<f64>,
@@ -57,12 +65,16 @@ impl SkillTree {
         }
     }
 
-    pub(crate) fn groups(&self) -> impl Iterator<Item = &Group> {
-        self.group.iter()
+    pub(crate) fn is_goal(&self, name: &str) -> bool {
+        self.goals().any(|goal| goal.name == name)
     }
 
-    pub(crate) fn groups_enumerated(&self) -> impl Iterator<Item = (&Group, GroupIndex)> {
-        self.group.iter().zip((0..).map(GroupIndex))
+    pub(crate) fn goals(&self) -> impl Iterator<Item = &Goal> {
+        self.goal.iter().flat_map(|v| v.iter())
+    }
+
+    pub(crate) fn groups(&self) -> impl Iterator<Item = &Group> {
+        self.group.iter()
     }
 }
 
@@ -82,10 +94,6 @@ impl Group {
 
     pub(crate) fn items(&self) -> impl Iterator<Item = &Item> {
         self.items.iter()
-    }
-
-    pub(crate) fn items_enumerated(&self) -> impl Iterator<Item = (&Item, ItemIndex)> {
-        self.items.iter().zip((0..).map(ItemIndex))
     }
 }
 
