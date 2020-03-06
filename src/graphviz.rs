@@ -95,7 +95,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
 
     for item in &group.items {
         let item_status = item.status.or(group.status).unwrap_or(Status::Unassigned);
-        let (emoji, fontcolor, start_tag, end_tag) = match item_status {
+        let (emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
             Status::Blocked => (
                 WATCH_EMOJI,
                 None,
@@ -110,8 +110,10 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         let fontcolor = attribute_str("fontcolor", &fontcolor, "");
         let bgcolor = attribute_str("bgcolor", &Some("cornsilk"), "");
         let href = attribute_str("href", &item.href, "");
-        let start_under = if item.href.is_some() { "<u>" } else { "" };
-        let end_under = if item.href.is_some() { "</u>" } else { "" };
+        if item.href.is_some() && start_tag == "" {
+            start_tag = "<u>";
+            end_tag = "</u>";
+        }
         let port_in = attribute_str("port", &item.port, "_in");
         let port_out = attribute_str("port", &item.port, "_out");
         writeln!(
@@ -120,7 +122,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
              <tr>\
              <td{bgcolor}{port_in}>{emoji}</td>\
              <td{fontcolor}{bgcolor}{href}{port_out}>\
-             {start_tag}{start_under}{label}{end_under}{end_tag}\
+             {start_tag}{label}{end_tag}\
              </td>\
              </tr>",
             fontcolor = fontcolor,
@@ -132,8 +134,6 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             label = item.label,
             start_tag = start_tag,
             end_tag = end_tag,
-            start_under = start_under,
-            end_under = end_under,
         )?;
     }
 
