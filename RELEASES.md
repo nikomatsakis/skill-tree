@@ -1,3 +1,7 @@
+# 1.3.1
+
+* Remove outdated dependencies
+
 # 1.3.0
 
 * Fix bug around underline
