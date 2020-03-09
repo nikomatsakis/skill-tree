@@ -86,11 +86,13 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
+    let group_href = attribute_str("href", &group.href, "");
 
     writeln!(
         output,
-        r#"    <tr><td bgcolor="darkgoldenrod" port="all" colspan="2">{}</td></tr>"#,
-        label,
+        r#"    <tr><td bgcolor="darkgoldenrod" port="all" colspan="2"{group_href}>{label}</td></tr>"#,
+        group_href = group_href,
+        label = label,
     )?;
 
     for item in &group.items {

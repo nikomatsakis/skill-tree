@@ -23,6 +23,7 @@ pub(crate) struct Group {
     pub(crate) items: Vec<Item>,
     pub(crate) width: Option<f64>,
     pub(crate) status: Option<Status>,
+    pub(crate) href: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]

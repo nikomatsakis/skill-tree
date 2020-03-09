@@ -35,6 +35,7 @@ items = [
 [[group]]
 name = "map-chalk-types-to-rustc-types"
 label = "Map chalk types to rustc types"
+href = "http://example.org"
 items = [
   { label = "Move Identifier to TypeFamily" },
   { label = "Adapt rutsc's debruijn index model", port="debruijn" },
