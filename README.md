@@ -18,16 +18,16 @@ time I'd seen it used that way).
 
 ## How does this project work?
 
-You create a [TOML file](tree-data/traits.toml) that defines the
+You create a [TOML file](tree-data/example.toml) that defines the
 "groups" (major work areas) along with the items in each group. These
 items can be linked to github issues or other urls, and you can create
 dependencies between groups and items. Here is an [example of such a
-file](tree-data/traits.toml).
+file](tree-data/example.toml).
 
 You then run the tool like so:
 
 ```bash
-> cargo run -- tree-data/traits.toml output
+> cargo run -- tree-data/example.toml output
 ```
 
 This will generate a directory `output` that contains various
