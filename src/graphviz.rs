@@ -44,7 +44,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
                 for requirement in requires {
                     writeln!(
                         output,
-                        r#"{} -> "{}":{};"#,
+                        r#"{} -> "{}":_{}_in;"#,
                         tree.port_name(requirement, "out"),
                         group.name,
                         item.port.as_ref().expect("missing port"),
