@@ -122,8 +122,9 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             start_tag = "<u>";
             end_tag = "</u>";
         }
-        let port_in = attribute_str("port", &item.port, "_in");
-        let port_out = attribute_str("port", &item.port, "_out");
+        let port = item.port.as_ref().map(|port| format!("_{}", port));
+        let port_in = attribute_str("port", &port, "_in");
+        let port_out = attribute_str("port", &port, "_out");
         writeln!(
             output,
             "    \
@@ -160,7 +161,7 @@ impl SkillTree {
         if let Some(index) = requires.find(":") {
             let name = &requires[..index];
             let port = &requires[index + 1..];
-            format!(r#""{}":{}_{}"#, name, port, mode)
+            format!(r#""{}":_{}_{}"#, name, port, mode)
         } else if self.is_goal(requires) {
             // Goals don't have ports, so we don't need a `:all`
             format!(r#""{}""#, requires)
