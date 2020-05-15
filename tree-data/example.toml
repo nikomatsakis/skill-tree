@@ -1,4 +1,15 @@
 [[group]]
+name = "legend"
+label = "Legend"
+header_color = "red"
+items = [
+  { label = "Unassigned", status = "Unassigned" },
+  { label = "Blocked", status = "Blocked" },
+  { label = "Assigned / In-progress", status = "Assigned" },
+  { label = "Complete", status = "Complete" }
+]
+
+[[group]]
 name = "align-rustc-predicate"
 label = "Align rustc predicates with chalk predicates"
 items = [
