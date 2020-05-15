@@ -75,9 +75,14 @@ const HAMMER_WRENCH_EMOJI: &str = "🛠️";
 const CHECKED_BOX_EMOJI: &str = "☑️";
 const RAISED_HAND_EMOJI: &str = "🙋";
 
+fn escape(s: &str) -> String {
+    htmlescape::encode_minimal(s).replace('\n', "<br/>")
+}
+
 #[throws(anyhow::Error)]
 fn write_goal_label(goal: &Goal, output: &mut dyn Write) {
     let label = goal.label.as_ref().unwrap_or(&goal.name);
+    let label = escape(label);
     writeln!(output, r#"  label = "{label}""#, label = label)?;
 }
 
@@ -86,6 +91,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
+    let label = escape(label);
     let group_href = attribute_str("href", &group.href, "");
 
     writeln!(
