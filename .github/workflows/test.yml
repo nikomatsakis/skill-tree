@@ -1,0 +1,20 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.platform }}-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: rustup default ${{ matrix.channel }}
+    - run: cargo build --verbose
+    - run: cargo test --verbose
+    strategy:
+       matrix:
+         platform: [ubuntu, macos, windows]
+         channel: [stable, beta, nightly]

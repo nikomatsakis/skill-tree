@@ -1,0 +1,27 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Create Example Output
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # Generate output and modify it slightly to be more suitable for GitHub pages.
+    - run: cargo run -- tree-data/example.toml output
+    - run: mv output/skill-tree.html output/index.html
+    - run: touch output/.nojekyll
+
+    - uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: output # The folder the action should deploy.
