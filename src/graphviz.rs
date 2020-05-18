@@ -44,7 +44,7 @@ pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
                 for requirement in requires {
                     writeln!(
                         output,
-                        r#"{} -> "{}":{};"#,
+                        r#"{} -> "{}":_{}_in;"#,
                         tree.port_name(requirement, "out"),
                         group.name,
                         item.port.as_ref().expect("missing port"),
@@ -75,9 +75,14 @@ const HAMMER_WRENCH_EMOJI: &str = "🛠️";
 const CHECKED_BOX_EMOJI: &str = "☑️";
 const RAISED_HAND_EMOJI: &str = "🙋";
 
+fn escape(s: &str) -> String {
+    htmlescape::encode_minimal(s).replace('\n', "<br/>")
+}
+
 #[throws(anyhow::Error)]
 fn write_goal_label(goal: &Goal, output: &mut dyn Write) {
     let label = goal.label.as_ref().unwrap_or(&goal.name);
+    let label = escape(label);
     writeln!(output, r#"  label = "{label}""#, label = label)?;
 }
 
@@ -86,6 +91,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
+    let label = escape(label);
     let group_href = attribute_str("href", &group.href, "");
 
     writeln!(
@@ -116,8 +122,9 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             start_tag = "<u>";
             end_tag = "</u>";
         }
-        let port_in = attribute_str("port", &item.port, "_in");
-        let port_out = attribute_str("port", &item.port, "_out");
+        let port = item.port.as_ref().map(|port| format!("_{}", port));
+        let port_in = attribute_str("port", &port, "_in");
+        let port_out = attribute_str("port", &port, "_out");
         writeln!(
             output,
             "    \
@@ -154,7 +161,7 @@ impl SkillTree {
         if let Some(index) = requires.find(":") {
             let name = &requires[..index];
             let port = &requires[index + 1..];
-            format!(r#""{}":{}_{}"#, name, port, mode)
+            format!(r#""{}":_{}_{}"#, name, port, mode)
         } else if self.is_goal(requires) {
             // Goals don't have ports, so we don't need a `:all`
             format!(r#""{}""#, requires)
