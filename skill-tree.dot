@@ -2,6 +2,17 @@ digraph g {
 graph [ rankdir = "LR" ];
 node [ fontsize="16", shape = "ellipse" ];
 edge [ ];
+"legend" [
+  label = <<table>
+    <tr><td bgcolor="red" port="all" colspan="2">Legend</td></tr>
+    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Unassigned</td></tr>
+    <tr><td bgcolor="cornsilk">⌚</td><td bgcolor="cornsilk"><i><font color="lightgrey">Blocked</font></i></td></tr>
+    <tr><td bgcolor="cornsilk">🛠️</td><td bgcolor="cornsilk">Assigned / In-progress</td></tr>
+    <tr><td bgcolor="cornsilk">☑️</td><td bgcolor="cornsilk"><s>Complete</s></td></tr>
+  </table>>
+  shape = "none"
+  margin = 0
+]
 "align-rustc-predicate" [
   label = <<table>
     <tr><td bgcolor="darkgoldenrod" port="all" colspan="2">Align rustc predicates with chalk predicates</td></tr>
