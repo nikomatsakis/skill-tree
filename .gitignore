@@ -4,3 +4,6 @@
 *.dot
 *.svg
 output
+
+### IDE files
+/.idea/

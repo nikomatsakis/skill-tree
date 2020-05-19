@@ -24,6 +24,7 @@ pub(crate) struct Group {
     pub(crate) width: Option<f64>,
     pub(crate) status: Option<Status>,
     pub(crate) href: Option<String>,
+    pub(crate) header_color: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]
