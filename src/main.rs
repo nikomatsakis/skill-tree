@@ -1,13 +1,11 @@
 use anyhow::Context;
 use fehler::throws;
 use rust_embed::RustEmbed;
+use skill_tree::SkillTree;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use structopt::StructOpt;
-
-mod graphviz;
-mod tree;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "skill-tree")]
@@ -29,7 +27,7 @@ fn main() {
     let opts: Opts = Opts::from_args();
 
     // Load the skill tree
-    let skill_tree = load_skill_tree(&opts.skill_tree)
+    let skill_tree = SkillTree::load(&opts.skill_tree)
         .with_context(|| format!("loading skill tree from `{}`", opts.skill_tree.display()))?;
 
     // Validate it for errors.
@@ -54,17 +52,12 @@ fn main() {
 }
 
 #[throws(anyhow::Error)]
-fn load_skill_tree(path: &Path) -> tree::SkillTree {
-    let skill_tree_text = std::fs::read_to_string(path)?;
-    toml::from_str(&skill_tree_text)?
-}
-
-#[throws(anyhow::Error)]
-fn write_dot_file(skill_tree: &tree::SkillTree, opts: &Opts) {
+fn write_dot_file(skill_tree: &SkillTree, opts: &Opts) {
     let dot_path = &opts.output_dir.join("skill-tree.dot");
     let mut dot_file =
         File::create(dot_path).with_context(|| format!("creating `{}`", dot_path.display()))?;
-    graphviz::write_graphviz(&skill_tree, &mut dot_file)
+    skill_tree
+        .write_graphviz(&mut dot_file)
         .with_context(|| format!("writing to `{}`", dot_path.display()))?;
 }
 
