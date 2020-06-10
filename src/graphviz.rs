@@ -2,8 +2,15 @@ use crate::tree::{Goal, Group, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
+impl SkillTree {
+    #[throws(anyhow::Error)]
+    pub fn write_graphviz(&self, output: &mut dyn Write) {
+        write_graphviz(self, output)?
+    }
+}
+
 #[throws(anyhow::Error)]
-pub(crate) fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
+fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     writeln!(output, r#"digraph g {{"#)?;
     writeln!(output, r#"graph [ rankdir = "LR" ];"#)?;
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
