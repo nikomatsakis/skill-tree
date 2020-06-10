@@ -8,3 +8,9 @@ function loadSkillTree(dot_path) {
         .then(element => { document.body.appendChild(element); })
     });
 }
+
+function convertDivToSkillTree(divId, dotText) {
+  viz.renderSVGElement(dotText).then(element => {
+    document.getElementById(divId).appendChild(element);
+  })
+}

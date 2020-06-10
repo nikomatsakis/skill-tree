@@ -62,7 +62,12 @@ impl SkillTree {
     #[throws(anyhow::Error)]
     pub fn load(path: &Path) -> SkillTree {
         let skill_tree_text = std::fs::read_to_string(path)?;
-        toml::from_str(&skill_tree_text)?
+        Self::parse(&skill_tree_text)?
+    }
+
+    #[throws(anyhow::Error)]
+    pub fn parse(text: &str) -> SkillTree {
+        toml::from_str(text)?
     }
 
     #[throws(anyhow::Error)]
