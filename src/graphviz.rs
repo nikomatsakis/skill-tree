@@ -3,9 +3,18 @@ use fehler::throws;
 use std::io::Write;
 
 impl SkillTree {
+    /// Writes graphviz representing this skill-tree to the given output.
     #[throws(anyhow::Error)]
     pub fn write_graphviz(&self, output: &mut dyn Write) {
         write_graphviz(self, output)?
+    }
+
+    /// Generates a string containing graphviz content for this skill-tree.
+    #[throws(anyhow::Error)]
+    pub fn to_graphviz(&self) -> String {
+        let mut output = Vec::new();
+        write_graphviz(self, &mut output)?;
+        String::from_utf8(output)?
     }
 }
 

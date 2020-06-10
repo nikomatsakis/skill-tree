@@ -1,0 +1,12 @@
+[book]
+authors = ["Niko Matsakis"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Skill-tree Book"
+
+[preprocessor.skill-tree]
+command = "mdbook-skill-tree"
+
+[output.html]
+additional-js = ["../viz-js/viz.js", "../viz-js/full.render.js", "../viz-js/skill-tree.js"]

@@ -1,6 +1,5 @@
 use anyhow::Context;
 use fehler::throws;
-use rust_embed::RustEmbed;
 use skill_tree::SkillTree;
 use std::fs::File;
 use std::io::Write;
@@ -16,11 +15,6 @@ struct Opts {
     #[structopt(name = "output_dir", parse(from_os_str))]
     output_dir: PathBuf,
 }
-
-// Embed the contents of the viz-js folder at build time
-#[derive(RustEmbed)]
-#[folder = "viz-js/"]
-struct VizJs;
 
 #[throws(anyhow::Error)]
 fn main() {
@@ -39,16 +33,6 @@ fn main() {
 
     // Write out the dot file
     write_dot_file(&skill_tree, &opts)?;
-
-    // Copy into it the content from viz-js folder
-    for file in VizJs::iter() {
-        let file: &str = file.as_ref();
-        let file_text = VizJs::get(file).unwrap();
-        let file_text: &[u8] = file_text.as_ref();
-        let output_path = opts.output_dir.join(file);
-        write_static_file(&output_path, file_text)
-            .with_context(|| format!("creating static file `{}`", output_path.display()))?;
-    }
 }
 
 #[throws(anyhow::Error)]
