@@ -17,7 +17,6 @@ Text
     let output = add_skill_tree(content, &mut 0).unwrap();
     println!("output:\n{}", output);
     assert!(output.contains(r#"<div id='skill-tree-0'></div>"#));
-    assert!(output.contains(r#"<script>convertDivToSkillTree("#));
 }
 
 #[test]

@@ -2,8 +2,7 @@ use anyhow::Context;
 use fehler::throws;
 use skill_tree::SkillTree;
 use std::fs::File;
-use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
