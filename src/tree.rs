@@ -1,42 +1,43 @@
 use fehler::throws;
 use serde_derive::Deserialize;
+use std::path::Path;
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct SkillTree {
-    pub(crate) group: Vec<Group>,
-    pub(crate) goal: Option<Vec<Goal>>,
+pub struct SkillTree {
+    pub group: Vec<Group>,
+    pub goal: Option<Vec<Goal>>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Goal {
-    pub(crate) name: String,
-    pub(crate) label: Option<String>,
-    pub(crate) requires: Option<Vec<String>>,
-    pub(crate) href: Option<String>,
+pub struct Goal {
+    pub name: String,
+    pub label: Option<String>,
+    pub requires: Option<Vec<String>>,
+    pub href: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Group {
-    pub(crate) name: String,
-    pub(crate) label: Option<String>,
-    pub(crate) requires: Option<Vec<String>>,
-    pub(crate) items: Vec<Item>,
-    pub(crate) width: Option<f64>,
-    pub(crate) status: Option<Status>,
-    pub(crate) href: Option<String>,
-    pub(crate) header_color: Option<String>,
+pub struct Group {
+    pub name: String,
+    pub label: Option<String>,
+    pub requires: Option<Vec<String>>,
+    pub items: Vec<Item>,
+    pub width: Option<f64>,
+    pub status: Option<Status>,
+    pub href: Option<String>,
+    pub header_color: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct GroupIndex(pub usize);
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Item {
-    pub(crate) label: String,
-    pub(crate) href: Option<String>,
-    pub(crate) port: Option<String>,
-    pub(crate) requires: Option<Vec<String>>,
-    pub(crate) status: Option<Status>,
+pub struct Item {
+    pub label: String,
+    pub href: Option<String>,
+    pub port: Option<String>,
+    pub requires: Option<Vec<String>>,
+    pub status: Option<Status>,
 }
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]
@@ -59,7 +60,18 @@ pub enum Status {
 
 impl SkillTree {
     #[throws(anyhow::Error)]
-    pub(crate) fn validate(&self) {
+    pub fn load(path: &Path) -> SkillTree {
+        let skill_tree_text = std::fs::read_to_string(path)?;
+        Self::parse(&skill_tree_text)?
+    }
+
+    #[throws(anyhow::Error)]
+    pub fn parse(text: &str) -> SkillTree {
+        toml::from_str(text)?
+    }
+
+    #[throws(anyhow::Error)]
+    pub fn validate(&self) {
         // gather: valid requires entries
 
         for group in &self.group {
@@ -67,22 +79,22 @@ impl SkillTree {
         }
     }
 
-    pub(crate) fn is_goal(&self, name: &str) -> bool {
+    pub fn is_goal(&self, name: &str) -> bool {
         self.goals().any(|goal| goal.name == name)
     }
 
-    pub(crate) fn goals(&self) -> impl Iterator<Item = &Goal> {
+    pub fn goals(&self) -> impl Iterator<Item = &Goal> {
         self.goal.iter().flat_map(|v| v.iter())
     }
 
-    pub(crate) fn groups(&self) -> impl Iterator<Item = &Group> {
+    pub fn groups(&self) -> impl Iterator<Item = &Group> {
         self.group.iter()
     }
 }
 
 impl Group {
     #[throws(anyhow::Error)]
-    pub(crate) fn validate(&self) {
+    pub fn validate(&self) {
         // check: that `name` is a valid graphviz identifier
 
         // check: each of the things in requires has the form
@@ -94,14 +106,14 @@ impl Group {
         }
     }
 
-    pub(crate) fn items(&self) -> impl Iterator<Item = &Item> {
+    pub fn items(&self) -> impl Iterator<Item = &Item> {
         self.items.iter()
     }
 }
 
 impl Item {
     #[throws(anyhow::Error)]
-    pub(crate) fn validate(&self) {
+    pub fn validate(&self) {
         // check: each of the things in requires has the form
         //        `identifier` or `identifier:port` and that all those
         //        identifiers map to groups
