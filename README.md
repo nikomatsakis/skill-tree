@@ -23,7 +23,7 @@ Use these steps to install it:
     * installs the `mdbook-skill-tree` executable
 * in your mdbook's directory, `mdbook-skill-tree install`
     * updates your `book.toml` to contain the relevant javascript files
-* in your mdbook, add a `skill-tree` code block, [as seen here](testbook/src/chapter_1.md).
+* in your mdbook, add a `skill-tree` code block, [as seen here](book/src/skill_tree.md).
 
 ## run manually
 
