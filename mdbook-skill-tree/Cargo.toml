@@ -3,6 +3,10 @@ name = "mdbook-skill-tree"
 version = "2.0.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2018"
+description = "mdbook plugin to show roadmaps"
+license = "MIT"
+repository = "https://github.com/nikomatsakis/skill-tree"
+homepage = "https://github.com/nikomatsakis/skill-tree"
 
 [dependencies]
 anyhow = "1.0"
