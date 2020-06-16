@@ -1,6 +1,6 @@
 [package]
 name = "skill-tree"
-version = "1.3.2"
+version = "2.0.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2018"
 description = "generate graphviz files to show roadmaps"
