@@ -12,32 +12,30 @@ time I'd seen it used that way).
 
 [wasm]: https://hacks.mozilla.org/2018/10/webassemblys-post-mvp-future/
 
-## Example
+## How to use
 
+### mdbook integration
 
+The main way to use this project is to integrate it into an mdbook.
+Use these steps to install it:
 
-## How does this project work?
+* `cargo install mdbook-skill-tree`
+    * installs the `mdbook-skill-tree` executable
+* in your mdbook's directory, `mdbook-skill-tree install`
+    * updates your `book.toml` to contain the relevant javascript files
+* in your mdbook, add a `skill-tree` code block, [as seen here](testbook/src/chapter_1.md).
 
-You create a [TOML file](tree-data/example.toml) that defines the
-"groups" (major work areas) along with the items in each group. These
-items can be linked to github issues or other urls, and you can create
-dependencies between groups and items. Here is an [example of such a
-file](tree-data/example.toml).
+## run manually
 
-You then run the tool like so:
+You can run `skill-tree` directly in which case it generates a `dot` file.
+For example:
 
 ```bash
-> cargo run -- tree-data/example.toml output
+cargo run -- tree-data/example.toml example.dot
 ```
 
-This will generate a directory `output` that contains various
-javascript and dot files. If you view `output/skill-tree.html` you
-will get a view of the complete skill tree. You can also load
-`output/skill-tree.js` (along with the `viz.js` scripts) and execute
-the skill tree from some context of your own.
-
-In particular, `output/skill-tree.dot` is your graphviz file that you
-can use to render on your own if you prefer.
+will transform the [`tree-data/example.toml`](tree-data/example.toml) 
+file you can find in this repository.
 
 ## Next steps
 
