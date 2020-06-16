@@ -19,7 +19,12 @@ struct JsFile {
     bytes: &'static [u8],
 }
 
+// NB: Ordering matters here!
 const JS_FILES: &[JsFile] = &[
+    JsFile {
+        name: "viz.js",
+        bytes: include_bytes!("../js/viz.js"),
+    },
     JsFile {
         name: "full.render.js",
         bytes: include_bytes!("../js/full.render.js"),
@@ -27,10 +32,6 @@ const JS_FILES: &[JsFile] = &[
     JsFile {
         name: "skill-tree.js",
         bytes: include_bytes!("../js/skill-tree.js"),
-    },
-    JsFile {
-        name: "viz.js",
-        bytes: include_bytes!("../js/viz.js"),
     },
 ];
 
