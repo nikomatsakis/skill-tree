@@ -14,24 +14,33 @@ use toml_edit::{value, Array, Document, Item, Table, Value};
 mod preprocessor;
 use preprocessor::SkillTreePreprocessor;
 
-struct JsFile {
+struct AdditionalFile {
     name: &'static str,
     bytes: &'static [u8],
+    ty: &'static str,
 }
 
 // NB: Ordering matters here!
-const JS_FILES: &[JsFile] = &[
-    JsFile {
+const ADDITIONAL_FILES: &[AdditionalFile] = &[
+    AdditionalFile {
+        name: "skill-tree.css",
+        bytes: include_bytes!("../js/skill-tree.css"),
+        ty: "css",
+    },
+    AdditionalFile {
         name: "viz.js",
         bytes: include_bytes!("../js/viz.js"),
+        ty: "js",
     },
-    JsFile {
+    AdditionalFile {
         name: "full.render.js",
         bytes: include_bytes!("../js/full.render.js"),
+        ty: "js",
     },
-    JsFile {
+    AdditionalFile {
         name: "skill-tree.js",
         bytes: include_bytes!("../js/skill-tree.js"),
+        ty: "js",
     },
 ];
 
@@ -78,7 +87,7 @@ fn handle_preprocessing() -> Result<(), Error> {
 
     if ctx.mdbook_version != mdbook::MDBOOK_VERSION {
         eprintln!(
-            "Warning: The mdbook-mermaid preprocessor was built against version \
+            "Warning: The mdbook-skill-tree preprocessor was built against version \
              {} of mdbook, but we're being called from version {}",
             mdbook::MDBOOK_VERSION,
             ctx.mdbook_version
@@ -138,7 +147,7 @@ fn handle_install(sub_args: &ArgMatches) {
     let mut printed = false;
 
     // Copy into it the content from viz-js folder
-    for file in JS_FILES {
+    for file in ADDITIONAL_FILES {
         let output_path = proj_dir.join(file.name);
         if output_path.exists() {
             log::debug!(
@@ -177,17 +186,17 @@ fn add_additional_files(doc: &mut Document) -> bool {
     let mut changed = false;
     let mut printed = true;
 
-    for file in JS_FILES {
-        let additional_js = additional(doc, "js");
-        if has_file(&additional_js, file.name) {
-            log::debug!("'{}' already in 'additional-js'. Skipping", file.name)
+    for file in ADDITIONAL_FILES {
+        let additional = additional(doc, file.ty);
+        if has_file(&additional, file.name) {
+            log::debug!("'{}' already in 'additional-{}'. Skipping", file.name, file.ty)
         } else {
             if !printed {
                 printed = true;
                 log::info!("Adding additional files to configuration");
             }
-            log::debug!("Adding '{}' to 'additional-js'", file.name);
-            insert_additional(doc, "js", file.name);
+            log::debug!("Adding '{}' to 'additional-{}'", file.name, file.ty);
+            insert_additional(doc, file.ty, file.name);
             changed = true;
         }
     }
