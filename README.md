@@ -9,8 +9,10 @@ project. The term is borrowed from video games, but it was first
 applied to project planning in this rather wonderful [blog post about
 WebAssembly's post-MVP future][wasm] (at least, that was the first
 time I'd seen it used that way).
-
 [wasm]: https://hacks.mozilla.org/2018/10/webassemblys-post-mvp-future/
+
+See an [example skill tree](https://nikomatsakis.github.io/skill-tree/)
+in this project's website.
 
 ## How to use
 
