@@ -6,6 +6,12 @@ use std::path::Path;
 pub struct SkillTree {
     pub group: Vec<Group>,
     pub goal: Option<Vec<Goal>>,
+    pub graphviz: Option<Graphviz>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Graphviz {
+    pub rankdir: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -21,11 +27,13 @@ pub struct Group {
     pub name: String,
     pub label: Option<String>,
     pub requires: Option<Vec<String>>,
+    pub description: Option<Vec<String>>,
     pub items: Vec<Item>,
     pub width: Option<f64>,
     pub status: Option<Status>,
     pub href: Option<String>,
     pub header_color: Option<String>,
+    pub description_color: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]

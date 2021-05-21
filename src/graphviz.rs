@@ -1,4 +1,4 @@
-use crate::tree::{Goal, Group, SkillTree, Status};
+use crate::tree::{Goal, Graphviz, Group, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
@@ -20,8 +20,19 @@ impl SkillTree {
 
 #[throws(anyhow::Error)]
 fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
+    let rankdir = match &tree.graphviz {
+        Some(Graphviz {
+            rankdir: Some(rankdir),
+            ..
+        }) => &rankdir[..],
+        _ => "LR",
+    };
     writeln!(output, r#"digraph g {{"#)?;
-    writeln!(output, r#"graph [ rankdir = "LR" ];"#)?;
+    writeln!(
+        output,
+        r#"graph [ rankdir = "{rankdir}" ];"#,
+        rankdir = rankdir
+    )?;
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
     writeln!(output, r#"edge [ ];"#)?;
 
@@ -114,6 +125,11 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         .as_ref()
         .map(String::as_str)
         .unwrap_or("darkgoldenrod");
+    let description_color = group
+        .description_color
+        .as_ref()
+        .map(String::as_str)
+        .unwrap_or("darkgoldenrod1");
 
     writeln!(
         output,
@@ -122,6 +138,16 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         label = label,
         header_color = header_color
     )?;
+
+    for label in group.description.iter().flatten() {
+        writeln!(
+            output,
+            r#"    <tr><td bgcolor="{description_color}" port="all" colspan="2"{group_href}>{label}</td></tr>"#,
+            group_href = group_href,
+            label = label,
+            description_color = description_color
+        )?;
+    }
 
     for item in &group.items {
         let item_status = item.status.or(group.status).unwrap_or(Status::Unassigned);
@@ -184,11 +210,9 @@ impl SkillTree {
             let name = &requires[..index];
             let port = &requires[index + 1..];
             format!(r#""{}":_{}_{}"#, name, port, mode)
-        } else if self.is_goal(requires) {
+        } else {
             // Goals don't have ports, so we don't need a `:all`
             format!(r#""{}""#, requires)
-        } else {
-            format!(r#""{}":all"#, requires)
         }
     }
 }
