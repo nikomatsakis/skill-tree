@@ -9,7 +9,7 @@ columns = [
 [doc.defaults]
 team = "async"
 
-[doc.emoji]
+[doc.emoji.team]
 "lang" = "T-lang"
 "libs" = "T-libs"
 "async" = "wg-async"

@@ -130,7 +130,7 @@ fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
 
         for column in tree.columns() {
             let item_value = item.column_value(tree, column);
-            let emoji = tree.emoji(item_value);
+            let emoji = tree.emoji(column, item_value);
             write!(
                 output,
                 "<td{bgcolor}>{emoji}</td>",

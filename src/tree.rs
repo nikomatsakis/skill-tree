@@ -18,8 +18,10 @@ pub struct Graphviz {
 pub struct Doc {
     pub columns: Vec<String>,
     pub defaults: Option<HashMap<String, String>>,
-    pub emoji: Option<HashMap<String, String>>,
+    pub emoji: Option<HashMap<String, EmojiMap>>,
 }
+
+pub type EmojiMap = HashMap<String, String>;
 
 #[derive(Debug, Deserialize)]
 pub struct Group {
@@ -93,11 +95,13 @@ impl SkillTree {
     }
 
     /// Translates an "input" into an emoji, returning "input" if not found.
-    pub fn emoji<'me>(&'me self, input: &'me str) -> &'me str {
+    pub fn emoji<'me>(&'me self, column: &str, input: &'me str) -> &'me str {
         if let Some(doc) = &self.doc {
-            if let Some(emoji) = &doc.emoji {
-                if let Some(output) = emoji.get(input) {
-                    return output;
+            if let Some(emoji_maps) = &doc.emoji {
+                if let Some(emoji_map) = emoji_maps.get(column) {
+                    if let Some(output) = emoji_map.get(input) {
+                        return output;
+                    }
                 }
             }
         }
