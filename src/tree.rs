@@ -17,6 +17,7 @@ pub struct Graphviz {
 #[derive(Default, Debug, Deserialize)]
 pub struct Doc {
     pub columns: Vec<String>,
+    pub defaults: Option<HashMap<String, String>>,
     pub emoji: Option<HashMap<String, String>>,
 }
 
@@ -126,7 +127,7 @@ impl Group {
 pub trait ItemExt {
     fn href(&self) -> Option<&String>;
     fn label(&self) -> &String;
-    fn column_value(&self, c: &str) -> &str;
+    fn column_value<'me>(&'me self, tree: &'me SkillTree, c: &str) -> &'me str;
 
     #[allow(redundant_semicolons)] // bug in "throws"
     #[throws(anyhow::Error)]
@@ -142,12 +143,20 @@ impl ItemExt for Item {
         self.get("label").unwrap()
     }
 
-    fn column_value(&self, c: &str) -> &str {
+    fn column_value<'me>(&'me self, tree: &'me SkillTree, c: &str) -> &'me str {
         if let Some(v) = self.get(c) {
-            v
-        } else {
-            ""
+            return v;
         }
+
+        if let Some(doc) = &tree.doc {
+            if let Some(defaults) = &doc.defaults {
+                if let Some(default_value) = defaults.get(c) {
+                    return default_value;
+                }
+            }
+        }
+
+        ""
     }
 
     #[throws(anyhow::Error)]

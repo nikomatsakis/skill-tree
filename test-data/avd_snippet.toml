@@ -6,6 +6,14 @@ columns = [
     "team",
 ]
 
+[doc.defaults]
+team = "async"
+
+[doc.emoji]
+"lang" = "T-lang"
+"libs" = "T-libs"
+"async" = "wg-async"
+
 [[group]]
 name = "async-traits"
 label = "Unergonomic async fns in traits"
