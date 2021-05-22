@@ -119,7 +119,6 @@ fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
             Status::Complete => (CHECKED_BOX_EMOJI, None, "<s>", "</s>"),
         };
 
-        let fontcolor = attribute_str("fontcolor", &fontcolor, "");
         let bgcolor = attribute_str("bgcolor", &Some("cornsilk"), "");
         let href = attribute_str("href", &item.href(), "");
         if item.href().is_some() && start_tag == "" {
@@ -141,8 +140,7 @@ fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
 
         write!(
             output,
-            "<td{fontcolor}{bgcolor}{href}>{start_tag}{label}{end_tag}</td>",
-            fontcolor = fontcolor,
+            "<td{bgcolor}{href}>{start_tag}{label}{end_tag}</td>",
             bgcolor = bgcolor,
             href = href,
             label = item.label(),
