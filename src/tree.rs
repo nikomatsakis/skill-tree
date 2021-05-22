@@ -5,21 +5,12 @@ use std::{collections::HashMap, path::Path};
 #[derive(Debug, Deserialize)]
 pub struct SkillTree {
     pub group: Vec<Group>,
-    pub goal: Option<Vec<Goal>>,
     pub graphviz: Option<Graphviz>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Graphviz {
     pub rankdir: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Goal {
-    pub name: String,
-    pub label: Option<String>,
-    pub requires: Option<Vec<String>>,
-    pub href: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -78,14 +69,6 @@ impl SkillTree {
         for group in &self.group {
             group.validate()?;
         }
-    }
-
-    pub fn is_goal(&self, name: &str) -> bool {
-        self.goals().any(|goal| goal.name == name)
-    }
-
-    pub fn goals(&self) -> impl Iterator<Item = &Goal> {
-        self.goal.iter().flat_map(|v| v.iter())
     }
 
     pub fn groups(&self) -> impl Iterator<Item = &Group> {

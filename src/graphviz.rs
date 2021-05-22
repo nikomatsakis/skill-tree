@@ -1,4 +1,4 @@
-use crate::tree::{Goal, Graphviz, Group, ItemExt, SkillTree, Status};
+use crate::tree::{Graphviz, Group, ItemExt, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
@@ -44,28 +44,10 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
         writeln!(output, r#"]"#)?;
     }
 
-    for goal in tree.goals() {
-        writeln!(output, r#""{}" ["#, goal.name)?;
-        write_goal_label(goal, output)?;
-        writeln!(output, r#"  shape = "note""#)?;
-        writeln!(output, r#"  margin = 0"#)?;
-        writeln!(output, r#"  style = "filled""#)?;
-        writeln!(output, r#"  fillcolor = "darkgoldenrod""#)?;
-        writeln!(output, r#"]"#)?;
-    }
-
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
                 writeln!(output, r#"{} -> {};"#, requirement, &group.name)?;
-            }
-        }
-    }
-
-    for goal in tree.goals() {
-        if let Some(requires) = &goal.requires {
-            for requirement in requires {
-                writeln!(output, r#"{} -> {};"#, requirement, &goal.name)?;
             }
         }
     }
@@ -80,13 +62,6 @@ const RAISED_HAND_EMOJI: &str = "🙋";
 
 fn escape(s: &str) -> String {
     htmlescape::encode_minimal(s).replace('\n', "<br/>")
-}
-
-#[throws(anyhow::Error)]
-fn write_goal_label(goal: &Goal, output: &mut dyn Write) {
-    let label = goal.label.as_ref().unwrap_or(&goal.name);
-    let label = escape(label);
-    writeln!(output, r#"  label = "{label}""#, label = label)?;
 }
 
 #[throws(anyhow::Error)]
