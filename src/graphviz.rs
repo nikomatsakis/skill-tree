@@ -57,26 +57,7 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
-                writeln!(
-                    output,
-                    r#"{} -> {};"#,
-                    tree.port_name(requirement, "out"),
-                    tree.port_name(&group.name, "in"),
-                )?;
-            }
-        }
-
-        for item in group.items() {
-            if let Some(requires) = &item.requires {
-                for requirement in requires {
-                    writeln!(
-                        output,
-                        r#"{} -> "{}":_{}_in;"#,
-                        tree.port_name(requirement, "out"),
-                        group.name,
-                        item.port.as_ref().expect("missing port"),
-                    )?;
-                }
+                writeln!(output, r#"{} -> {};"#, requirement, &group.name)?;
             }
         }
     }
@@ -84,12 +65,7 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     for goal in tree.goals() {
         if let Some(requires) = &goal.requires {
             for requirement in requires {
-                writeln!(
-                    output,
-                    r#"{} -> {};"#,
-                    tree.port_name(requirement, "out"),
-                    tree.port_name(&goal.name, "in"),
-                )?;
+                writeln!(output, r#"{} -> {};"#, requirement, &goal.name)?;
             }
         }
     }
@@ -170,15 +146,12 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             start_tag = "<u>";
             end_tag = "</u>";
         }
-        let port = item.port.as_ref().map(|port| format!("_{}", port));
-        let port_in = attribute_str("port", &port, "_in");
-        let port_out = attribute_str("port", &port, "_out");
         writeln!(
             output,
             "    \
              <tr>\
-             <td{bgcolor}{port_in}>{emoji}</td>\
-             <td{fontcolor}{bgcolor}{href}{port_out}>\
+             <td{bgcolor}>{emoji}</td>\
+             <td{fontcolor}{bgcolor}{href}>\
              {start_tag}{label}{end_tag}\
              </td>\
              </tr>",
@@ -186,8 +159,6 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             bgcolor = bgcolor,
             emoji = emoji,
             href = href,
-            port_in = port_in,
-            port_out = port_out,
             label = item.label,
             start_tag = start_tag,
             end_tag = end_tag,
@@ -201,18 +172,5 @@ fn attribute_str(label: &str, text: &Option<impl AsRef<str>>, suffix: &str) -> S
     match text {
         None => format!(""),
         Some(t) => format!(" {}=\"{}{}\"", label, t.as_ref(), suffix),
-    }
-}
-
-impl SkillTree {
-    fn port_name(&self, requires: &str, mode: &str) -> String {
-        if let Some(index) = requires.find(":") {
-            let name = &requires[..index];
-            let port = &requires[index + 1..];
-            format!(r#""{}":_{}_{}"#, name, port, mode)
-        } else {
-            // Goals don't have ports, so we don't need a `:all`
-            format!(r#""{}""#, requires)
-        }
     }
 }

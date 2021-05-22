@@ -43,8 +43,6 @@ pub struct GroupIndex(pub usize);
 pub struct Item {
     pub label: String,
     pub href: Option<String>,
-    pub port: Option<String>,
-    pub requires: Option<Vec<String>>,
     pub status: Option<Status>,
 }
 
