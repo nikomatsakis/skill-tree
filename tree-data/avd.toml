@@ -69,8 +69,8 @@ requires = [
   "async-fn-everywhere",
 ]
 items = [
-  { label = "AsyncRead trait" },
-  { label = "AsyncWrite trait" },
+  { label = "AsyncRead trait in std" },
+  { label = "AsyncWrite trait in std" },
   { label = "TBD: some way to write poll fns easily" },
 ]
 
@@ -94,6 +94,20 @@ items = [
 ]
 
 [[group]]
+name = "retargetable-io"
+label = "Retargetable I/O"
+description = [
+  "Use Tcp Streams and other constructs without baking in a specific runtime or implementation",
+  "Use Tcp Streams without threading generics all throughout your code",
+]
+requires = [
+  "portability-is-possible",
+]
+items = [
+  { label = "TBD" },
+]
+
+[[group]]
 name = "portability-by-default"
 label = "Portability across runtimes by default"
 description = [
@@ -101,6 +115,7 @@ description = [
 ]
 requires = [
   "portability-is-possible",
+  "retargetable-io",
 ]
 items = [
   { label = "TBD" },
@@ -144,7 +159,7 @@ items = [
 name = "async-raii"
 label = "Async RAII"
 description = [
-  "Add an async drop and be confident that it wiill be invoked without effort",
+  "Add an async drop and be confident that it will be invoked without effort",
   "Reliably detect cases where sync drop might be used instead",
 ]
 requires = [
@@ -166,16 +181,16 @@ requires = [
   "async-fn-everywhere",
   "portability-by-default",
   "async-raii",
+  "retargetable-io"
 ]
 items = [
-  { label = "Standard API for async I/O operations (open TCP stream, etc)" },
 ]
 
 [[group]]
 name = "debugger-integration"
 label = "Debugger integration"
 description = [
-  "se a debugger to step through Rust code, print expressions, <br/> in a way that is roughly analogous to C++ code",
+  "Use a debugger to step through Rust code, print expressions, <br/> in a way that is roughly analogous to C++ code",
 ]
 items = [
   { label = "Better debuginfo" },
@@ -246,6 +261,26 @@ items = [
 ]
 
 [[group]]
+name = "ffcf"
+label = "If it compiles, it works"
+description = [
+    "Bugs are generally logic bugs, not a result of surprising async mechanisms",
+    "Easy to create parallelism operating on borrowed data",
+    "When tasks are no longer needed, they can be reliably canceled",
+    "It is easy to visualize your program's task structure",
+]
+requires = [
+  "async-traits",
+  "debugging-tooling",
+]
+items = [
+  { label = "Way to avoid tasks being dropped unexpectedly while they continue to execute" },
+  { label = "Mechanism for launching tasks within those scopes that can reference borrowed data" },
+  { label = "Hierarchical structure for tasks with cancelation propagation" },
+  { label = "Integration into the visualization infrastructure and debug tools" },
+]
+
+[[group]]
 name = "zero-copy"
 label = "Zero copy works beautifully"
 description = [
@@ -253,21 +288,45 @@ description = [
 ]
 requires = [
   "async-traits",
+  "ffcf",
 ]
 items = [
   { label = "TBD" },
 ]
 
+
 [[group]]
-name = "ffcf"
-label = "Footgun-free control flow"
+name = "testing"
+label = "Testing your async code is easy"
 description = [
-  "Not get surprised by the fact that your future is not executing as it is not awaited",
-  "",
+  "Testing async code does not require a lot of pre-planning",
+  "You can easily test connection errors, delays, and other corner cases",
 ]
 requires = [
-  "async-traits",
+  "retargetable-io",
 ]
 items = [
-  { label = "TBD" },
+  { label = "Ability to fire timers programmatically (mock time)" },
+  { label = "`run_until_stalled`" },
+  { label = "`run_until_stalled`" },
 ]
+
+[[group]]
+name = "long-running-loops"
+label = "Long-running sequential loops are easy to find and remedy"
+description = [
+  "Testing async code does not require a lot of pre-planning",
+  "You can easily test connection errors, delays, and other corner cases",
+]
+requires = [
+  "profiling-tooling",
+  "ffcf",
+]
+items = [
+  { label = "Integration of profiling output into lint tools" },
+  { label = "Combinators and hooks to make it easy to yield in long-running loops" },
+  { label = "Highly optimized `spawn_blocking`" },
+]
+
+# How to record out of scope things?
+
