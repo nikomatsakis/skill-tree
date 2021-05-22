@@ -2,20 +2,25 @@
 rankdir = "TD"
 
 [doc]
-columns = ["team", "status", "blocked"]
+columns = ["status", "assigned"]
 
 [doc.defaults]
 status = "tbd"
-team = "async"
-blocked = "available"
+assigned = "no"
 
-[doc.emoji]
+[doc.emoji.status]
 "tbd" = "▯▯▯▯▯"
 "exploration" = "▮▯▯▯▯"
 "design" = "▮▮▯▯▯"
 "implementation" = "▮▮▮▯▯"
 "stabilization" = "▮▮▮▮▯"
 "done" = "▮▮▮▮▮"
+
+[doc.emoji.assigned]
+"no" = "✋"
+"yes" = "✍️"
+"blocked" = "🛑"
+# "niko" = "<img src='https://avatars.githubusercontent.com/u/155238?s=40&v=4'/>"
 
 [[group]]
 name = "async-traits"
@@ -40,9 +45,9 @@ requires = [
 ]
 items = [
   { label = "Support for `dyn Trait` where `Trait` has async fn", status = "design" },
-  { label = "Async fn sugar in traits", status = "design" },
-  { label = "Async closure support", team = "traits", status = "design" },
-  { label = "Boxable, recursive async fn", team = "lang" },
+  { label = "Async fn sugar in traits", status = "design", assigned = "niko" },
+  { label = "Async closure support", status = "design", assigned = "blocked" },
+  { label = "Boxable, recursive async fn", status = "design" },
 ]
 
 [[group]]
@@ -56,10 +61,10 @@ requires = [
   "async-fn-everywhere",
 ]
 items = [
-  { label = "AsyncIterator trait", team = "libs" },
-  { label = "Common combinators on AsyncIterator", team = "libs" },
-  { label = "Generators (both sync and async)", team = "lang" },
-  { label = "Easy conversion of sync iter to async iter", team = "libs" },
+  { label = "AsyncIterator trait", status = "implementation" },
+  { label = "Common combinators on AsyncIterator", status = "implementation", assigned = "blocked" },
+  { label = "Generators (both sync and async)", status = "design", assigned = "yes" },
+  { label = "Easy conversion of sync iter to async iter", status = "design", assigned = "blocked" },
 ]
 
 [[group]]
@@ -74,9 +79,9 @@ requires = [
   "async-fn-everywhere",
 ]
 items = [
-  { label = "AsyncRead trait in std", team = "async" },
-  { label = "AsyncWrite trait in std", team = "async" },
-  { label = "TBD: some way to write poll fns easily", team = "lang" },
+  { label = "AsyncRead trait in std", status = "implementation" },
+  { label = "AsyncWrite trait in std", status = "implementation" },
+  { label = "TBD: some way to write poll fns easily", status = "exploration" },
 ]
 
 [[group]]
@@ -85,17 +90,17 @@ label = "Portability across runtimes is possible"
 description = [
   "Grab a library from crates.io and<br/>it works with your chosen runtime easily,<br/>as long as the author does a good job",
   "Possible to author libraries<br/>that can be used with many runtimes,<br/>but requires careful use of traits",
-  "Create a new runtime and have existing (portable) libraries work<br/>with no modifications",
+  "Create a new runtime and have existing<br/>(portable) libraries work with no modifications",
 ]
 requires = [
   "async-iter",
   "async-read-and-write",
 ]
 items = [
-  { label = "Trait for spawning tasks", team = "async" },
-  { label = "Trait for spawning blocking tasks", team = "async" },
-  { label = "Trait for timers", team = "async" },
-  { label = "Common utilities like select, join, mutexes", team = "async" },
+  { label = "Trait for spawning tasks", status = "exploration" },
+  { label = "Trait for spawning blocking tasks", status = "exploration" },
+  { label = "Trait for timers", status = "exploration" },
+  { label = "Common utilities like select, join, mutexes", status = "design" },
 ]
 
 [[group]]
@@ -109,7 +114,7 @@ requires = [
   "portability-is-possible",
 ]
 items = [
-  { label = "TBD", team = "async" },
+  { label = "TBD", status = "tbd" },
 ]
 
 [[group]]
@@ -123,7 +128,6 @@ requires = [
   "retargetable-io",
 ]
 items = [
-  { label = "TBD", team = "async" },
 ]
 
 [[group]]
@@ -134,12 +138,12 @@ description = [
   "Be confident you've avoided common async footguns",
 ]
 items = [
-  { label = "Diagnostics improvements (expand)", team = "compiler" },
-  { label = "Lint holding things over an await that should not be held over an await", team = "compiler" },
-  { label = "Lint for blocking functions in an async context", team = "compiler" },
-  { label = "Lint for functions that will take too long to execute", team = "compiler" },
-  { label = "Lint when potentially canceling 'futures not known to be cancel safe'", team = "compiler" },
-  { label = "Lint for sync dropping when there's an async close", team = "compiler" },
+  { label = "Diagnostics improvements (expand)", status = "implementation", team = "compiler" },
+  { label = "Lint holding things over an await that should not be held over an await", status = "implementation" },
+  { label = "Lint for blocking functions in an async context", status = "design" },
+  { label = "Lint for functions that will take too long to execute", status = "design" },
+  { label = "Lint when potentially canceling 'futures not known to be cancel safe'", status = "exploration" },
+  { label = "Lint for sync dropping when there's an async close", status = "design" },
 ]
 
 [[group]]
@@ -156,8 +160,8 @@ requires = [
   "portability-is-possible"
 ]
 items = [
-  { label = "TBD" },
-  { label = "Work on identifying common design patterns", team = "async" },
+  { label = "Improve async book structure", status = "implementation" },
+  { label = "Work on identifying common design patterns", status = "implementation" },
 ]
 
 [[group]]
@@ -171,8 +175,8 @@ requires = [
   "async-traits"
 ]
 items = [
-  { label = "Ability to write an async disposal method" },
-  { label = "Lint for sync dropping when there's async drop", team = "compiler" },
+  { label = "Ability to write an async disposal method", status = "design", assigned = "blocked" },
+  { label = "Lint for sync dropping when there's async drop", status = "design" },
 ]
 
 [[group]]
@@ -213,8 +217,8 @@ requires = [
   "debugger-integration"
 ]
 items = [
-  { label = "Runtime:Debugger interface" },
-  { label = "Runtime bug detectors" },
+  { label = "Runtime:Debugger interface", status = "exploration" },
+  { label = "Runtime bug detectors", status = "exploration" },
 ]
 
 [[group]]
@@ -228,7 +232,7 @@ requires = [
   "debugging-tooling"
 ]
 items = [
-  { label = "TBD" },
+  { label = "TBD", status = "exploration" },
 ]
 
 [[group]]
@@ -248,8 +252,8 @@ requires = [
   "debugging-tooling",
 ]
 items = [
-  { label = "Runtime warnings in debug mode" },
-  { label = "Cross-referencing between docs, lints, errors, and so forth" },
+  { label = "Runtime warnings in debug mode", status = "exploration" },
+  { label = "Cross-referencing between docs, lints, errors, and so forth", status = "exploration"  },
 ]
 
 [[group]]
@@ -262,8 +266,8 @@ requires = [
   "async-traits",
 ]
 items = [
-  { label = "associated traits" },
-  { label = "module-level generics" },
+  { label = "associated traits", status = "tbd" },
+  { label = "module-level generics", status = "tbd" },
 ]
 
 [[group]]
@@ -280,10 +284,10 @@ requires = [
   "debugging-tooling",
 ]
 items = [
-  { label = "Way to avoid tasks being dropped unexpectedly while they continue to execute" },
-  { label = "Mechanism for launching tasks within those scopes that can reference borrowed data" },
-  { label = "Hierarchical structure for tasks with cancelation propagation" },
-  { label = "Integration into the visualization infrastructure and debug tools" },
+  { label = "Way to avoid tasks being dropped unexpectedly while they continue to execute", status = "exploration" },
+  { label = "Mechanism for launching tasks within those scopes that can reference borrowed data", status = "design", assigned = "blocked" },
+  { label = "Hierarchical structure for tasks with cancelation propagation", status = "exploration" },
+  { label = "Integration into the visualization infrastructure and debug tools", status = "design", assigned = "blocked" },
 ]
 
 [[group]]
@@ -314,7 +318,9 @@ requires = [
 items = [
   { label = "Ability to fire timers programmatically (mock time)" },
   { label = "`run_until_stalled`" },
-  { label = "`run_until_stalled`" },
+  { label = "Mock sockets and file objects?" },
+  { label = "Inject errors or long delays" },
+  { label = "Inject fake objects for real ones without modifying your code" },
 ]
 
 [[group]]
@@ -329,9 +335,9 @@ requires = [
   "ffcf",
 ]
 items = [
-  { label = "Integration of profiling output into lint tools" },
-  { label = "Combinators and hooks to make it easy to yield in long-running loops" },
-  { label = "Highly optimized `spawn_blocking`" },
+  { label = "Integration of profiling output into lint tools", status = "exploration" },
+  { label = "Combinators and hooks to make it easy to yield in long-running loops", status = "exploration"  },
+  { label = "Highly optimized `spawn_blocking`", status = "exploration"  },
 ]
 
 # How to record out of scope things?
