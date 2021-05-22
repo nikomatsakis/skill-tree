@@ -1,16 +1,20 @@
 [graphviz]
 rankdir = "TD"
 
-[[group]]
-name = "legend"
-label = "Legend"
-header_color = "red"
-items = [
-  { label = "Unassigned", status = "Unassigned" },
-  { label = "Blocked", status = "Blocked" },
-  { label = "Assigned / In-progress", status = "Assigned" },
-  { label = "Complete", status = "Complete" }
-]
+[doc]
+columns = ["status"]
+
+[doc.defaults]
+status = "tbd"
+
+# Possible status values
+[doc.emoji]
+"tbd" = "▯▯▯▯▯"
+"exploration" = "▮▯▯▯▯"
+"design" = "▮▮▯▯▯"
+"implementation" = "▮▮▮▯▯"
+"stabilization" = "▮▮▮▮▯"
+"done" = "▮▮▮▮▮"
 
 [[group]]
 name = "async-traits"
@@ -19,8 +23,8 @@ description = [
   "Write non-dyn-safe traits that can have fns that return futures",
 ]
 items = [
-  { label = "Type alias impl Trait" },
-  { label = "Generic associated types" },
+  { label = "Type alias impl Trait", status = "implementation" },
+  { label = "Generic associated types", status = "implementation" },
 ]
 
 [[group]]
@@ -34,10 +38,10 @@ requires = [
   "async-traits",
 ]
 items = [
-  { label = "Support for `dyn Trait` where `Trait` has async fn" },
-  { label = "Async fn sugar in traits" },
-  { label = "Async closure support" },
-  { label = "Boxable, recursive async fn" },
+  { label = "Support for `dyn Trait` where `Trait` has async fn", status = "design" },
+  { label = "Async fn sugar in traits", status = "design" },
+  { label = "Async closure support", team = "traits" },
+  { label = "Boxable, recursive async fn", team = "lang" },
 ]
 
 [[group]]
@@ -51,10 +55,10 @@ requires = [
   "async-fn-everywhere",
 ]
 items = [
-  { label = "AsyncIterator trait" },
-  { label = "Common combinators on AsyncIterator" },
-  { label = "Generators (both sync and async)" },
-  { label = "Easy conversion of sync iter to async iter" },
+  { label = "AsyncIterator trait", team = "libs" },
+  { label = "Common combinators on AsyncIterator", team = "libs" },
+  { label = "Generators (both sync and async)", team = "lang" },
+  { label = "Easy conversion of sync iter to async iter", team = "libs" },
 ]
 
 [[group]]
@@ -69,9 +73,9 @@ requires = [
   "async-fn-everywhere",
 ]
 items = [
-  { label = "AsyncRead trait in std" },
-  { label = "AsyncWrite trait in std" },
-  { label = "TBD: some way to write poll fns easily" },
+  { label = "AsyncRead trait in std", team = "async" },
+  { label = "AsyncWrite trait in std", team = "async" },
+  { label = "TBD: some way to write poll fns easily", team = "lang" },
 ]
 
 [[group]]
@@ -87,10 +91,10 @@ requires = [
   "async-read-and-write",
 ]
 items = [
-  { label = "Trait for spawning tasks" },
-  { label = "Trait for spawning blocking tasks" },
-  { label = "Trait for timers" },
-  { label = "Common utilities like select, join, mutexes" },
+  { label = "Trait for spawning tasks", team = "async" },
+  { label = "Trait for spawning blocking tasks", team = "async" },
+  { label = "Trait for timers", team = "async" },
+  { label = "Common utilities like select, join, mutexes", team = "async" },
 ]
 
 [[group]]
@@ -104,7 +108,7 @@ requires = [
   "portability-is-possible",
 ]
 items = [
-  { label = "TBD" },
+  { label = "TBD", team = "async" },
 ]
 
 [[group]]
@@ -118,7 +122,7 @@ requires = [
   "retargetable-io",
 ]
 items = [
-  { label = "TBD" },
+  { label = "TBD", team = "async" },
 ]
 
 [[group]]
@@ -129,12 +133,12 @@ description = [
   "Be confident you've avoided common async footguns",
 ]
 items = [
-  { label = "Diagnostics improvements (expand)" },
-  { label = "Lint holding things over an await that should not be held over an await" },
-  { label = "Lint for blocking functions in an async context" },
-  { label = "Lint for functions that will take too long to execute" },
-  { label = "Lint when potentially canceling 'futures not known to be cancel safe'" },
-  { label = "Lint for sync dropping when there's an async close" },
+  { label = "Diagnostics improvements (expand)", team = "compiler" },
+  { label = "Lint holding things over an await that should not be held over an await", team = "compiler" },
+  { label = "Lint for blocking functions in an async context", team = "compiler" },
+  { label = "Lint for functions that will take too long to execute", team = "compiler" },
+  { label = "Lint when potentially canceling 'futures not known to be cancel safe'", team = "compiler" },
+  { label = "Lint for sync dropping when there's an async close", team = "compiler" },
 ]
 
 [[group]]
@@ -152,7 +156,7 @@ requires = [
 ]
 items = [
   { label = "TBD" },
-  { label = "Work on identifying common design patterns" },
+  { label = "Work on identifying common design patterns", team = "async" },
 ]
 
 [[group]]
@@ -167,7 +171,7 @@ requires = [
 ]
 items = [
   { label = "Ability to write an async disposal method" },
-  { label = "Lint for sync dropping when there's async drop" },
+  { label = "Lint for sync dropping when there's async drop", team = "compiler" },
 ]
 
 [[group]]
@@ -257,7 +261,8 @@ requires = [
   "async-traits",
 ]
 items = [
-  { label = "TBD" },
+  { label = "associated traits" },
+  { label = "module-level generics" },
 ]
 
 [[group]]
