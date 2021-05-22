@@ -1,6 +1,6 @@
 use fehler::throws;
 use serde_derive::Deserialize;
-use std::path::Path;
+use std::{collections::HashMap, path::Path};
 
 #[derive(Debug, Deserialize)]
 pub struct SkillTree {
@@ -39,12 +39,7 @@ pub struct Group {
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct GroupIndex(pub usize);
 
-#[derive(Debug, Deserialize)]
-pub struct Item {
-    pub label: String,
-    pub href: Option<String>,
-    pub status: Option<Status>,
-}
+pub type Item = HashMap<String, String>;
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct ItemIndex(pub usize);
@@ -117,13 +112,30 @@ impl Group {
     }
 }
 
-impl Item {
+pub trait ItemExt {
+    fn href(&self) -> Option<&String>;
+    fn label(&self) -> &String;
+
+    #[allow(redundant_semicolons)] // bug in "throws"
     #[throws(anyhow::Error)]
-    pub fn validate(&self) {
+    fn validate(&self);
+}
+
+impl ItemExt for Item {
+    fn href(&self) -> Option<&String> {
+        self.get("href")
+    }
+
+    fn label(&self) -> &String {
+        self.get("label").unwrap()
+    }
+
+    #[throws(anyhow::Error)]
+    fn validate(&self) {
         // check: each of the things in requires has the form
         //        `identifier` or `identifier:port` and that all those
         //        identifiers map to groups
 
-        // check: if you have a non-empty `requires`, must have a port
+        // check: only contains known keys
     }
 }

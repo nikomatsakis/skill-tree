@@ -1,4 +1,4 @@
-use crate::tree::{Goal, Graphviz, Group, SkillTree, Status};
+use crate::tree::{Goal, Graphviz, Group, ItemExt, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
@@ -126,7 +126,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
     }
 
     for item in &group.items {
-        let item_status = item.status.or(group.status).unwrap_or(Status::Unassigned);
+        let item_status = Status::Unassigned; // XXX
         let (emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
             Status::Blocked => (
                 WATCH_EMOJI,
@@ -141,8 +141,8 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
 
         let fontcolor = attribute_str("fontcolor", &fontcolor, "");
         let bgcolor = attribute_str("bgcolor", &Some("cornsilk"), "");
-        let href = attribute_str("href", &item.href, "");
-        if item.href.is_some() && start_tag == "" {
+        let href = attribute_str("href", &item.href(), "");
+        if item.href().is_some() && start_tag == "" {
             start_tag = "<u>";
             end_tag = "</u>";
         }
@@ -159,7 +159,7 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             bgcolor = bgcolor,
             emoji = emoji,
             href = href,
-            label = item.label,
+            label = item.label(),
             start_tag = start_tag,
             end_tag = end_tag,
         )?;
