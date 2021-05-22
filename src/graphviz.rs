@@ -38,7 +38,7 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
 
     for group in tree.groups() {
         writeln!(output, r#""{}" ["#, group.name)?;
-        write_group_label(group, output)?;
+        write_group_label(tree, group, output)?;
         writeln!(output, r#"  shape = "none""#)?;
         writeln!(output, r#"  margin = 0"#)?;
         writeln!(output, r#"]"#)?;
@@ -65,7 +65,7 @@ fn escape(s: &str) -> String {
 }
 
 #[throws(anyhow::Error)]
-fn write_group_label(group: &Group, output: &mut dyn Write) {
+fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
@@ -82,27 +82,32 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         .map(String::as_str)
         .unwrap_or("darkgoldenrod1");
 
+    // We have one column for each thing specified by user, plus the label.
+    let columns = tree.columns().len() + 1;
+
     writeln!(
         output,
-        r#"    <tr><td bgcolor="{header_color}" port="all" colspan="2"{group_href}>{label}</td></tr>"#,
+        r#"    <tr><td bgcolor="{header_color}" colspan="{columns}"{group_href}>{label}</td></tr>"#,
         group_href = group_href,
         label = label,
-        header_color = header_color
+        header_color = header_color,
+        columns = columns,
     )?;
 
     for label in group.description.iter().flatten() {
         writeln!(
             output,
-            r#"    <tr><td bgcolor="{description_color}" port="all" colspan="2"{group_href}>{label}</td></tr>"#,
+            r#"    <tr><td bgcolor="{description_color}" colspan="{columns}"{group_href}>{label}</td></tr>"#,
             group_href = group_href,
             label = label,
-            description_color = description_color
+            description_color = description_color,
+            columns = columns,
         )?;
     }
 
     for item in &group.items {
         let item_status = Status::Unassigned; // XXX
-        let (emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
+        let (_emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
             Status::Blocked => (
                 WATCH_EMOJI,
                 None,
@@ -121,23 +126,31 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             start_tag = "<u>";
             end_tag = "</u>";
         }
-        writeln!(
+        write!(output, "    <tr>")?;
+
+        for column in tree.columns() {
+            let item_value = item.column_value(column);
+            let emoji = tree.emoji(item_value);
+            write!(
+                output,
+                "<td{bgcolor}>{emoji}</td>",
+                bgcolor = bgcolor,
+                emoji = emoji
+            )?;
+        }
+
+        write!(
             output,
-            "    \
-             <tr>\
-             <td{bgcolor}>{emoji}</td>\
-             <td{fontcolor}{bgcolor}{href}>\
-             {start_tag}{label}{end_tag}\
-             </td>\
-             </tr>",
+            "<td{fontcolor}{bgcolor}{href}>{start_tag}{label}{end_tag}</td>",
             fontcolor = fontcolor,
             bgcolor = bgcolor,
-            emoji = emoji,
             href = href,
             label = item.label(),
             start_tag = start_tag,
             end_tag = end_tag,
         )?;
+
+        writeln!(output, "</tr>")?;
     }
 
     writeln!(output, r#"  </table>>"#)?;

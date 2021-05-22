@@ -4,26 +4,26 @@ node [ fontsize="16", shape = "ellipse" ];
 edge [ ];
 "async-traits" [
   label = <<table>
-    <tr><td bgcolor="darkgoldenrod" port="all" colspan="2">Unergonomic async fns in traits</td></tr>
-    <tr><td bgcolor="darkgoldenrod1" port="all" colspan="2">Write non-dyn-safe traits that can have fns that return futures</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Type alias impl Trait</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Generic associated types</td></tr>
+    <tr><td bgcolor="darkgoldenrod" colspan="2">Unergonomic async fns in traits</td></tr>
+    <tr><td bgcolor="darkgoldenrod1" colspan="2">Write non-dyn-safe traits that can have fns that return futures</td></tr>
+    <tr><td bgcolor="cornsilk">lang</td><td fontcolor="red" bgcolor="cornsilk">Type alias impl Trait</td></tr>
+    <tr><td bgcolor="cornsilk">libs</td><td fontcolor="red" bgcolor="cornsilk">Generic associated types</td></tr>
   </table>>
   shape = "none"
   margin = 0
 ]
 "async-fn-everywhere" [
   label = <<table>
-    <tr><td bgcolor="darkgoldenrod" port="all" colspan="2">Async fn everywhere</td></tr>
-    <tr><td bgcolor="darkgoldenrod1" port="all" colspan="2">Write async fn anywhere you can write fn</td></tr>
-    <tr><td bgcolor="darkgoldenrod1" port="all" colspan="2">Write async closures anywhere you can write sync closures</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Support for `dyn Trait` where `Trait` has async fn</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Async fn sugar in traits</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Async closure support</td></tr>
-    <tr><td bgcolor="cornsilk">🙋</td><td fontcolor="red" bgcolor="cornsilk">Boxable, recursive async fn</td></tr>
+    <tr><td bgcolor="darkgoldenrod" colspan="2">Async fn everywhere</td></tr>
+    <tr><td bgcolor="darkgoldenrod1" colspan="2">Write async fn anywhere you can write fn</td></tr>
+    <tr><td bgcolor="darkgoldenrod1" colspan="2">Write async closures anywhere you can write sync closures</td></tr>
+    <tr><td bgcolor="cornsilk"></td><td fontcolor="red" bgcolor="cornsilk">Support for `dyn Trait` where `Trait` has async fn</td></tr>
+    <tr><td bgcolor="cornsilk"></td><td fontcolor="red" bgcolor="cornsilk">Async fn sugar in traits</td></tr>
+    <tr><td bgcolor="cornsilk"></td><td fontcolor="red" bgcolor="cornsilk">Async closure support</td></tr>
+    <tr><td bgcolor="cornsilk"></td><td fontcolor="red" bgcolor="cornsilk">Boxable, recursive async fn</td></tr>
   </table>>
   shape = "none"
   margin = 0
 ]
-async-traits -> async-fn-everywhere;
+"async-traits" -> "async-fn-everywhere";
 }

@@ -1,6 +1,11 @@
 [graphviz]
 rankdir = "TD"
 
+[doc]
+columns = [
+    "team",
+]
+
 [[group]]
 name = "async-traits"
 label = "Unergonomic async fns in traits"
@@ -8,8 +13,8 @@ description = [
     "Write non-dyn-safe traits that can have fns that return futures",
 ]
 items = [
-    { label = "Type alias impl Trait" },
-    { label = "Generic associated types" },
+    { label = "Type alias impl Trait", team = "lang" },
+    { label = "Generic associated types", team = "libs" },
 ]
 
 [[group]]

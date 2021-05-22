@@ -6,11 +6,18 @@ use std::{collections::HashMap, path::Path};
 pub struct SkillTree {
     pub group: Vec<Group>,
     pub graphviz: Option<Graphviz>,
+    pub doc: Option<Doc>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Graphviz {
     pub rankdir: Option<String>,
+}
+
+#[derive(Default, Debug, Deserialize)]
+pub struct Doc {
+    pub columns: Vec<String>,
+    pub emoji: Option<HashMap<String, String>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -74,6 +81,27 @@ impl SkillTree {
     pub fn groups(&self) -> impl Iterator<Item = &Group> {
         self.group.iter()
     }
+
+    /// Returns the expected column titles for each item (excluding the label).
+    pub fn columns(&self) -> &[String] {
+        if let Some(doc) = &self.doc {
+            &doc.columns
+        } else {
+            &[]
+        }
+    }
+
+    /// Translates an "input" into an emoji, returning "input" if not found.
+    pub fn emoji<'me>(&'me self, input: &'me str) -> &'me str {
+        if let Some(doc) = &self.doc {
+            if let Some(emoji) = &doc.emoji {
+                if let Some(output) = emoji.get(input) {
+                    return output;
+                }
+            }
+        }
+        input
+    }
 }
 
 impl Group {
@@ -98,6 +126,7 @@ impl Group {
 pub trait ItemExt {
     fn href(&self) -> Option<&String>;
     fn label(&self) -> &String;
+    fn column_value(&self, c: &str) -> &str;
 
     #[allow(redundant_semicolons)] // bug in "throws"
     #[throws(anyhow::Error)]
@@ -111,6 +140,14 @@ impl ItemExt for Item {
 
     fn label(&self) -> &String {
         self.get("label").unwrap()
+    }
+
+    fn column_value(&self, c: &str) -> &str {
+        if let Some(v) = self.get(c) {
+            v
+        } else {
+            ""
+        }
     }
 
     #[throws(anyhow::Error)]
