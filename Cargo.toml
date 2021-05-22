@@ -22,5 +22,9 @@ svg = "0.5.12"
 toml = "0.5.1"
 htmlescape = "0.3.1"
 
+[dev-dependencies]
+regex = "1.0"
+prettydiff = "0.4"
+
 [profile.release.build-override]
 opt-level = 0
