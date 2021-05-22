@@ -2,12 +2,13 @@
 rankdir = "TD"
 
 [doc]
-columns = ["status"]
+columns = ["team", "status", "blocked"]
 
 [doc.defaults]
 status = "tbd"
+team = "async"
+blocked = "available"
 
-# Possible status values
 [doc.emoji]
 "tbd" = "▯▯▯▯▯"
 "exploration" = "▮▯▯▯▯"
@@ -40,7 +41,7 @@ requires = [
 items = [
   { label = "Support for `dyn Trait` where `Trait` has async fn", status = "design" },
   { label = "Async fn sugar in traits", status = "design" },
-  { label = "Async closure support", team = "traits" },
+  { label = "Async closure support", team = "traits", status = "design" },
   { label = "Boxable, recursive async fn", team = "lang" },
 ]
 
