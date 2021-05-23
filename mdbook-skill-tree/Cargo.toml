@@ -11,7 +11,7 @@ homepage = "https://github.com/nikomatsakis/skill-tree"
 [dependencies]
 anyhow = "1.0"
 skill-tree = { version="2.0.0", path=".." }
-mdbook = "0.3"
+mdbook = "0.4.7"
 pulldown-cmark = "0.7.0"
 pulldown-cmark-to-cmark = "4.0.0"
 env_logger = "0.7.1"
