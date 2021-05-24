@@ -5,6 +5,7 @@ use std::{collections::HashMap, path::Path};
 #[derive(Debug, Deserialize)]
 pub struct SkillTree {
     pub group: Vec<Group>,
+    pub cluster: Option<Vec<Cluster>>,
     pub graphviz: Option<Graphviz>,
     pub doc: Option<Doc>,
 }
@@ -24,8 +25,17 @@ pub struct Doc {
 pub type EmojiMap = HashMap<String, String>;
 
 #[derive(Debug, Deserialize)]
+pub struct Cluster {
+    pub name: String,
+    pub label: String,
+    pub color: Option<String>,
+    pub style: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Group {
     pub name: String,
+    pub cluster: Option<String>,
     pub label: Option<String>,
     pub requires: Option<Vec<String>>,
     pub description: Option<Vec<String>>,
@@ -77,12 +87,16 @@ impl SkillTree {
         // gather: valid requires entries
 
         for group in &self.group {
-            group.validate()?;
+            group.validate(self)?;
         }
     }
 
     pub fn groups(&self) -> impl Iterator<Item = &Group> {
         self.group.iter()
+    }
+
+    pub fn group_named(&self, name: &str) -> Option<&Group> {
+        self.group.iter().find(|g| g.name == name)
     }
 
     /// Returns the expected column titles for each item (excluding the label).
@@ -111,12 +125,22 @@ impl SkillTree {
 
 impl Group {
     #[throws(anyhow::Error)]
-    pub fn validate(&self) {
+    pub fn validate(&self, tree: &SkillTree) {
         // check: that `name` is a valid graphviz identifier
 
         // check: each of the things in requires has the form
         //        `identifier` or `identifier:port` and that all those
         //        identifiers map to groups
+
+        for group_name in self.requires.iter().flatten() {
+            if tree.group_named(group_name).is_none() {
+                anyhow::bail!(
+                    "the group `{}` has a dependency on a group `{}` that does not exist",
+                    self.name,
+                    group_name,
+                )
+            }
+        }
 
         for item in &self.items {
             item.validate()?;

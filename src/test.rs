@@ -37,3 +37,9 @@ fn run_test(file_name: &str) {
 fn avd_snippet() {
     run_test("avd_snippet");
 }
+
+#[test]
+#[should_panic(expected = "the group `A` has a dependency on a group `B` that does not exist")]
+fn invalid_requires() {
+    run_test("invalid_requires");
+}
