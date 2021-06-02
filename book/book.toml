@@ -8,4 +8,4 @@ title = "Skill-tree Book"
 command = "mdbook-skill-tree"
 [output.html]
 additional-css =["skill-tree.css"]
-additional-js =["viz.js", "full.render.js", "skill-tree.js"]
+additional-js =["viz.js", "panzoom.min.js", "full.render.js", "skill-tree.js"]

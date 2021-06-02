@@ -38,6 +38,11 @@ const ADDITIONAL_FILES: &[AdditionalFile] = &[
         ty: "js",
     },
     AdditionalFile {
+        name: "panzoom.min.js",
+        bytes: include_bytes!("../js/panzoom.min.js"),
+        ty: "js",
+    },
+    AdditionalFile {
         name: "skill-tree.js",
         bytes: include_bytes!("../js/skill-tree.js"),
         ty: "js",
@@ -189,7 +194,11 @@ fn add_additional_files(doc: &mut Document) -> bool {
     for file in ADDITIONAL_FILES {
         let additional = additional(doc, file.ty);
         if has_file(&additional, file.name) {
-            log::debug!("'{}' already in 'additional-{}'. Skipping", file.name, file.ty)
+            log::debug!(
+                "'{}' already in 'additional-{}'. Skipping",
+                file.name,
+                file.ty
+            )
         } else {
             if !printed {
                 printed = true;

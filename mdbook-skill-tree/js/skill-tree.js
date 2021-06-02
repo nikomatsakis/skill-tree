@@ -10,8 +10,15 @@ function loadSkillTree(dot_path) {
 }
 
 function convertDivToSkillTree(divId, dotText) {
-  new Viz().renderSVGElement(dotText.dot_text).then(element => {
-    document.getElementById(divId).appendChild(element);
+  new Viz().renderSVGElement(dotText.dot_text).then(svg_elem => {
+    let parent = document.getElementById(divId);
+    parent.appendChild(svg_elem);
+
+    var element = svg_elem.children[0];
+    panzoom(element, {
+      bounds: true,
+      boundsPadding: 0.1
+    });
   })
 }
 
