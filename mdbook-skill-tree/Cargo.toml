@@ -1,6 +1,6 @@
 [package]
 name = "mdbook-skill-tree"
-version = "2.0.0"
+version = "3.0.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2018"
 description = "mdbook plugin to show roadmaps"
@@ -10,7 +10,7 @@ homepage = "https://github.com/nikomatsakis/skill-tree"
 
 [dependencies]
 anyhow = "1.0"
-skill-tree = { version="2.0.0", path=".." }
+skill-tree = { version="3.0.0", path=".." }
 mdbook = "0.4.7"
 pulldown-cmark = "0.7.0"
 pulldown-cmark-to-cmark = "4.0.0"
