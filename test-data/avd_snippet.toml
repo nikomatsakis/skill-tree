@@ -1,0 +1,43 @@
+[graphviz]
+rankdir = "TD"
+
+[doc]
+columns = [
+    "team",
+]
+
+[doc.defaults]
+team = "async"
+
+[doc.emoji.team]
+"lang" = "T-lang"
+"libs" = "T-libs"
+"async" = "wg-async"
+
+[[group]]
+name = "async-traits"
+label = "Unergonomic async fns in traits"
+description = [
+    "Write non-dyn-safe traits that can have fns that return futures",
+]
+items = [
+    { label = "Type alias impl Trait", team = "lang" },
+    { label = "Generic associated types", team = "libs" },
+]
+
+[[group]]
+name = "async-fn-everywhere"
+label = "Async fn everywhere"
+description = [
+  "Write async fn anywhere you can write fn",
+  "Write async closures anywhere you can write sync closures",
+]
+requires = [
+  "async-traits",
+]
+items = [
+  { label = "Support for `dyn Trait` where `Trait` has async fn" },
+  { label = "Async fn sugar in traits" },
+  { label = "Async closure support" },
+  { label = "Boxable, recursive async fn" },
+]

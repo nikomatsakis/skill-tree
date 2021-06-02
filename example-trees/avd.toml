@@ -1,0 +1,268 @@
+[graphviz]
+rankdir = "TD"
+
+[doc]
+columns = ["status", "assigned"]
+
+[doc.defaults]
+status = "tbd"
+assigned = "no"
+
+[doc.emoji.status]
+"tbd" = "▯▯▯▯▯"
+"exploration" = "▮▯▯▯▯"
+"design" = "▮▮▯▯▯"
+"implementation" = "▮▮▮▯▯"
+"stabilization" = "▮▮▮▮▯"
+"done" = "▮▮▮▮▮"
+
+[doc.emoji.assigned]
+"no" = "✋"
+"yes" = "✍️"
+"blocked" = "🛑"
+# "niko" = "<img src='https://avatars.githubusercontent.com/u/155238?s=40&v=4'/>"
+
+
+[[group]]
+name = "async-traits"
+label = "Async traits are possible"
+description = [
+  "Possible to write async abstractions using traits",
+  "Working with dyn-safety requires careful work",
+]
+items = [
+  { label = "Type alias impl Trait", status = "implementation" },
+  { label = "Generic associated types", status = "implementation" },
+]
+
+[[group]]
+name = "async-fn-everywhere"
+label = "Async fn everywhere"
+description = [
+  "Write async fn anywhere you can write fn",
+  "Write async closures anywhere you can write sync closures",
+]
+requires = [
+  "async-traits",
+]
+items = [
+  { label = "Support for `dyn Trait` where `Trait` has async fn", status = "design" },
+  { label = "Async fn sugar in traits", status = "design", assigned = "niko" },
+  { label = "Async closure support", status = "design", assigned = "blocked" },
+  { label = "Boxable, recursive async fn", status = "design" },
+]
+
+[[group]]
+name = "async-iter"
+label = "Async iteration is awesome"
+description = [
+  "Use async iterators as easily as sync iterators",
+  "Write async and sync iterators with equal ease",
+]
+requires = [
+  "async-fn-everywhere",
+]
+items = [
+  { label = "AsyncIterator trait", status = "implementation" },
+  { label = "Common combinators on AsyncIterator", status = "implementation", assigned = "blocked" },
+  { label = "Generators (both sync and async)", status = "design", assigned = "yes" },
+  { label = "Easy conversion of sync iter to async iter", status = "design", assigned = "blocked" },
+]
+
+[[group]]
+name = "async-read-and-write"
+label = "Async read and write are a pleasure to use"
+description = [
+  "Easy to pass around interoperable readers and writers",
+  "Easy to impl AsyncRead and AsyncWrite traits",
+  "Easy to write adapters that wrap async read and async write",
+]
+requires = [
+  "async-fn-everywhere",
+]
+items = [
+  { label = "AsyncRead trait in std", status = "implementation" },
+  { label = "AsyncWrite trait in std", status = "implementation" },
+  { label = "TBD: some way to write poll fns easily", status = "exploration" },
+]
+
+[[group]]
+name = "portability-is-possible"
+label = "Portability across runtimes is possible"
+description = [
+  "Grab a library from crates.io and<br/>it works with your chosen runtime,<br/>as long as the author does a good job",
+  "Possible to author libraries<br/>that can be used with many runtimes,<br/>but requires careful use of traits",
+  "Create a new runtime and have existing<br/>(portable) libraries work with no modifications",
+]
+requires = [
+  "async-iter",
+  "async-read-and-write",
+]
+items = [
+  { label = "Trait for spawning tasks", status = "exploration" },
+  { label = "Trait for spawning blocking tasks", status = "exploration" },
+  { label = "Trait for timers", status = "exploration" },
+  { label = "Common utilities like select, join, mutexes", status = "design" },
+]
+
+[[group]]
+name = "getting-started"
+label = "Getting started in async Rust is a smooth experience"
+description = [
+  "Easy to find, quality resources for learning async Rust",
+  "Use Tcp Streams and other constructs without baking in a specific runtime or implementation",
+  "Use Tcp Streams without threading generics all throughout your code",
+  "Compiler and error messages help you avoid common mistakes",
+  "Design patterns are well known",
+]
+requires = [
+  "portability-is-possible",
+]
+items = [
+  { label = "Improve async book structure", status = "implementation" },
+  { label = "Lint for blocking functions in an async context", status = "design" },
+  { label = "Lint holding things over an await that should not be held over an await", status = "implementation" },
+  { label = "Work on identifying common design patterns", status = "implementation" },
+]
+
+[[group]]
+name = "resolving-problems"
+label = "Resolving problems in running applications is easy"
+description = [
+  "Using a debugger with Rust basically works",
+  "Find out what tasks your program currently has",
+  "Show why tasks are blocked",
+  "Detect common pitfalls and async hazards",
+]
+requires = [
+  "getting-started",
+]
+items = [
+  { label = "Better debuginfo", status = "exploration" },
+  { label = "Runtime Debugger interface", status = "exploration" },
+  { label = "Runtime bug detectors", status = "exploration" },
+  { label = "Improve async book structure", status = "implementation" },
+  { label = "Work on identifying common design patterns", status = "implementation" },
+]
+
+[[group]]
+name = "performance-tooling"
+label = "Me make Rust FAST"
+description = [
+  "Profiles of specific tasks (heap, memory, etc)",
+  "Long-running sequential loops are easy to find and remedy",
+  "Overall profiles",
+]
+requires = [
+  "resolving-problems"
+]
+items = [
+  { label = "Lint for functions that will take too long to execute", status = "design" },
+  { label = "Runtime warnings in debug mode", status = "exploration" },
+  { label = "Profiler-guided lints", status = "design" },
+  { label = "Combinators and hooks to make it easy to yield in long-running loops", status = "exploration"  },
+  { label = "Highly optimized `spawn_blocking`", status = "exploration"  },
+  { label = "Turbowish profiler support", status = "design" },
+]
+[[group]]
+name = "async-raii"
+label = "Easily manage async cleanup"
+description = [
+  "Add an async drop and be confident that it will be invoked without effort",
+  "Reliably detect cases where sync drop might be used instead",
+]
+requires = [
+  "async-traits",
+]
+items = [
+  { label = "Ability to write an async disposal method", status = "design", assigned = "blocked" },
+  { label = "Lint for sync dropping when there's async drop", status = "design" },
+]
+
+# [[group]]
+# name = "first-class-learning-experience"
+# label = "First-class learning experience"
+# description = [
+#   "When async doesn't work as I expect <br/> (whether at compilation time, runtime, debugging)...",
+#   "something identifies the problem",
+#   "something explains the problem",
+#   "something proposes solutions",
+#   "after reading the explanation and the solutions, <br/> I understand what I did wrong",
+# ]
+# requires = [
+#   "resolving-problems",
+#   "performance-tooling",
+# ]
+# items = [
+#   { label = "Cross-referencing between docs, lints, errors, and so forth", status = "exploration"  },
+# ]
+
+[[group]]
+name = "portability-across-send"
+label = "Portability across Send"
+description = [
+  "write code that can be Send or not-Send at zero-cost (e.g., use Rc vs Arc)",
+]
+requires = [
+  "portability-is-possible",
+]
+items = [
+  { label = "associated traits", status = "tbd" },
+  { label = "module-level generics", status = "tbd" },
+]
+
+[[group]]
+name = "ffcf"
+label = "If it compiles, it works"
+description = [
+    "Bugs are generally logic bugs, not a result of surprising async mechanisms",
+    "Easy to create parallelism operating on borrowed data",
+    "When tasks are no longer needed, they can be reliably canceled",
+    "It is easy to visualize your program's task structure",
+]
+requires = [
+  "async-raii",
+  "getting-started",
+]
+items = [
+  { label = "Way to avoid tasks being dropped unexpectedly while they continue to execute", status = "exploration" },
+  { label = "Mechanism for launching tasks within those scopes that can reference borrowed data", status = "design", assigned = "blocked" },
+  { label = "Hierarchical structure for tasks with cancelation propagation", status = "exploration" },
+  { label = "Lint when potentially canceling 'futures not known to be cancel safe'", status = "exploration" },
+  { label = "Integration into the visualization infrastructure and debug tools", status = "design", assigned = "blocked" },
+]
+
+[[group]]
+name = "zero-copy"
+label = "Zero copy works beautifully"
+description = [
+  "permit zero copy",
+]
+requires = [
+  "ffcf",
+]
+items = [
+  { label = "TBD" },
+]
+
+[[group]]
+name = "testing"
+label = "Testing your async code is easy"
+description = [
+  "Testing async code does not require a lot of pre-planning",
+  "You can easily test connection errors, delays, and other corner cases",
+]
+requires = [
+  "getting-started",
+]
+items = [
+  { label = "Ability to fire timers programmatically (mock time)" },
+  { label = "`run_until_stalled`" },
+  { label = "Mock sockets and file objects?" },
+  { label = "Inject errors or long delays" },
+  { label = "Inject fake objects for real ones without modifying your code" },
+]
+
+
+# How to record out of scope things?
+

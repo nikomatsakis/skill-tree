@@ -4,3 +4,8 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Skill-tree Book"
+[preprocessor.skill-tree]
+command = "mdbook-skill-tree"
+[output.html]
+additional-css =["skill-tree.css"]
+additional-js =["viz.js", "panzoom.min.js", "full.render.js", "skill-tree.js"]

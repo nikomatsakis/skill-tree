@@ -1,6 +1,6 @@
 [package]
 name = "skill-tree"
-version = "2.0.0"
+version = "3.0.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2018"
 description = "generate graphviz files to show roadmaps"
@@ -21,6 +21,10 @@ serde_derive = "1.0"
 svg = "0.5.12"
 toml = "0.5.1"
 htmlescape = "0.3.1"
+
+[dev-dependencies]
+regex = "1.0"
+prettydiff = "0.4"
 
 [profile.release.build-override]
 opt-level = 0

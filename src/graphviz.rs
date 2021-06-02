@@ -1,4 +1,4 @@
-use crate::tree::{Goal, Group, SkillTree, Status};
+use crate::tree::{Graphviz, Group, ItemExt, SkillTree, Status};
 use fehler::throws;
 use std::io::Write;
 
@@ -20,70 +20,64 @@ impl SkillTree {
 
 #[throws(anyhow::Error)]
 fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
+    let rankdir = match &tree.graphviz {
+        Some(Graphviz {
+            rankdir: Some(rankdir),
+            ..
+        }) => &rankdir[..],
+        _ => "LR",
+    };
     writeln!(output, r#"digraph g {{"#)?;
-    writeln!(output, r#"graph [ rankdir = "LR" ];"#)?;
+    writeln!(
+        output,
+        r#"graph [ rankdir = "{rankdir}" ];"#,
+        rankdir = rankdir
+    )?;
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
     writeln!(output, r#"edge [ ];"#)?;
 
-    for group in tree.groups() {
-        writeln!(output, r#""{}" ["#, group.name)?;
-        write_group_label(group, output)?;
-        writeln!(output, r#"  shape = "none""#)?;
-        writeln!(output, r#"  margin = 0"#)?;
-        writeln!(output, r#"]"#)?;
+    if let Some(clusters) = &tree.cluster {
+        for cluster in clusters {
+            let cluster_name = format!("cluster_{}", cluster.name);
+            writeln!(
+                output,
+                r#"subgraph {cluster_name} {{"#,
+                cluster_name = cluster_name
+            )?;
+            writeln!(output, r#"    label="{}";"#, cluster.label)?;
+            write_cluster(tree, output, Some(&cluster.name))?;
+            writeln!(output, r#"}}"#)?;
+        }
     }
-
-    for goal in tree.goals() {
-        writeln!(output, r#""{}" ["#, goal.name)?;
-        write_goal_label(goal, output)?;
-        writeln!(output, r#"  shape = "note""#)?;
-        writeln!(output, r#"  margin = 0"#)?;
-        writeln!(output, r#"  style = "filled""#)?;
-        writeln!(output, r#"  fillcolor = "darkgoldenrod""#)?;
-        writeln!(output, r#"]"#)?;
-    }
+    write_cluster(tree, output, None)?;
 
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
-                writeln!(
-                    output,
-                    r#"{} -> {};"#,
-                    tree.port_name(requirement, "out"),
-                    tree.port_name(&group.name, "in"),
-                )?;
-            }
-        }
-
-        for item in group.items() {
-            if let Some(requires) = &item.requires {
-                for requirement in requires {
-                    writeln!(
-                        output,
-                        r#"{} -> "{}":_{}_in;"#,
-                        tree.port_name(requirement, "out"),
-                        group.name,
-                        item.port.as_ref().expect("missing port"),
-                    )?;
-                }
-            }
-        }
-    }
-
-    for goal in tree.goals() {
-        if let Some(requires) = &goal.requires {
-            for requirement in requires {
-                writeln!(
-                    output,
-                    r#"{} -> {};"#,
-                    tree.port_name(requirement, "out"),
-                    tree.port_name(&goal.name, "in"),
-                )?;
+                writeln!(output, r#""{}" -> "{}";"#, requirement, &group.name)?;
             }
         }
     }
 
     writeln!(output, r#"}}"#)?;
+}
+
+#[throws(anyhow::Error)]
+fn write_cluster(tree: &SkillTree, output: &mut dyn Write, cluster: Option<&String>) {
+    for group in tree.groups() {
+        // If we are doing a cluster, the group must be in it;
+        // otherwise, the group must not be in any cluster.
+        match (&group.cluster, cluster) {
+            (None, None) => {}
+            (Some(c1), Some(c2)) if c1 == c2 => {}
+            _ => continue,
+        }
+        writeln!(output, r#""{}" ["#, group.name)?;
+        write_group_label(tree, group, output)?;
+        writeln!(output, r#"  shape = "none""#)?;
+        writeln!(output, r#"  margin = 0"#)?;
+        writeln!(output, r#"]"#)?;
+    }
 }
 
 const WATCH_EMOJI: &str = "⌚";
@@ -96,14 +90,7 @@ fn escape(s: &str) -> String {
 }
 
 #[throws(anyhow::Error)]
-fn write_goal_label(goal: &Goal, output: &mut dyn Write) {
-    let label = goal.label.as_ref().unwrap_or(&goal.name);
-    let label = escape(label);
-    writeln!(output, r#"  label = "{label}""#, label = label)?;
-}
-
-#[throws(anyhow::Error)]
-fn write_group_label(group: &Group, output: &mut dyn Write) {
+fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
     writeln!(output, r#"  label = <<table>"#)?;
 
     let label = group.label.as_ref().unwrap_or(&group.name);
@@ -114,18 +101,38 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
         .as_ref()
         .map(String::as_str)
         .unwrap_or("darkgoldenrod");
+    let description_color = group
+        .description_color
+        .as_ref()
+        .map(String::as_str)
+        .unwrap_or("darkgoldenrod1");
+
+    // We have one column for each thing specified by user, plus the label.
+    let columns = tree.columns().len() + 1;
 
     writeln!(
         output,
-        r#"    <tr><td bgcolor="{header_color}" port="all" colspan="2"{group_href}>{label}</td></tr>"#,
+        r#"    <tr><td bgcolor="{header_color}" colspan="{columns}"{group_href}>{label}</td></tr>"#,
         group_href = group_href,
         label = label,
-        header_color = header_color
+        header_color = header_color,
+        columns = columns,
     )?;
 
+    for label in group.description.iter().flatten() {
+        writeln!(
+            output,
+            r#"    <tr><td bgcolor="{description_color}" colspan="{columns}"{group_href}>{label}</td></tr>"#,
+            group_href = group_href,
+            label = label,
+            description_color = description_color,
+            columns = columns,
+        )?;
+    }
+
     for item in &group.items {
-        let item_status = item.status.or(group.status).unwrap_or(Status::Unassigned);
-        let (emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
+        let item_status = Status::Unassigned; // XXX
+        let (_emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
             Status::Blocked => (
                 WATCH_EMOJI,
                 None,
@@ -137,35 +144,36 @@ fn write_group_label(group: &Group, output: &mut dyn Write) {
             Status::Complete => (CHECKED_BOX_EMOJI, None, "<s>", "</s>"),
         };
 
-        let fontcolor = attribute_str("fontcolor", &fontcolor, "");
         let bgcolor = attribute_str("bgcolor", &Some("cornsilk"), "");
-        let href = attribute_str("href", &item.href, "");
-        if item.href.is_some() && start_tag == "" {
+        let href = attribute_str("href", &item.href(), "");
+        if item.href().is_some() && start_tag == "" {
             start_tag = "<u>";
             end_tag = "</u>";
         }
-        let port = item.port.as_ref().map(|port| format!("_{}", port));
-        let port_in = attribute_str("port", &port, "_in");
-        let port_out = attribute_str("port", &port, "_out");
-        writeln!(
+        write!(output, "    <tr>")?;
+
+        for column in tree.columns() {
+            let item_value = item.column_value(tree, column);
+            let emoji = tree.emoji(column, item_value);
+            write!(
+                output,
+                "<td{bgcolor}>{emoji}</td>",
+                bgcolor = bgcolor,
+                emoji = emoji
+            )?;
+        }
+
+        write!(
             output,
-            "    \
-             <tr>\
-             <td{bgcolor}{port_in}>{emoji}</td>\
-             <td{fontcolor}{bgcolor}{href}{port_out}>\
-             {start_tag}{label}{end_tag}\
-             </td>\
-             </tr>",
-            fontcolor = fontcolor,
+            "<td{bgcolor}{href}>{start_tag}{label}{end_tag}</td>",
             bgcolor = bgcolor,
-            emoji = emoji,
             href = href,
-            port_in = port_in,
-            port_out = port_out,
-            label = item.label,
+            label = item.label(),
             start_tag = start_tag,
             end_tag = end_tag,
         )?;
+
+        writeln!(output, "</tr>")?;
     }
 
     writeln!(output, r#"  </table>>"#)?;
@@ -175,20 +183,5 @@ fn attribute_str(label: &str, text: &Option<impl AsRef<str>>, suffix: &str) -> S
     match text {
         None => format!(""),
         Some(t) => format!(" {}=\"{}{}\"", label, t.as_ref(), suffix),
-    }
-}
-
-impl SkillTree {
-    fn port_name(&self, requires: &str, mode: &str) -> String {
-        if let Some(index) = requires.find(":") {
-            let name = &requires[..index];
-            let port = &requires[index + 1..];
-            format!(r#""{}":_{}_{}"#, name, port, mode)
-        } else if self.is_goal(requires) {
-            // Goals don't have ports, so we don't need a `:all`
-            format!(r#""{}""#, requires)
-        } else {
-            format!(r#""{}":all"#, requires)
-        }
     }
 }

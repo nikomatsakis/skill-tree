@@ -1,0 +1,9 @@
+[[group]]
+name = "A"
+label = "Unergonomic async fns in traits"
+requires = ["B"]
+items = [
+    { label = "Type alias impl Trait" },
+    { label = "Generic associated types" },
+]
+

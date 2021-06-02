@@ -82,7 +82,7 @@ fn add_skill_tree(content: &str, counter: &mut usize) -> Result<String> {
 
                     // FIXME -- we should serialize this into something that displays the error
                     // when rendered
-                    Err(e) => panic!("encountered error {}", e),
+                    Err(e) => panic!("encountered error {} parsing {:?}", e, skill_tree_content),
                 };
 
                 // Get a fresh id for this block.
@@ -120,7 +120,7 @@ fn add_skill_tree(content: &str, counter: &mut usize) -> Result<String> {
     let events = events.filter_map(|e| e);
     cmark(events, &mut buf, None)
         .map(|_| buf)
-        .map_err(|err| Error::from(format!("Markdown serialization failed: {}", err)))
+        .map_err(|err| Error::msg(format!("Markdown serialization failed: {}", err)))
 }
 
 #[cfg(test)]
