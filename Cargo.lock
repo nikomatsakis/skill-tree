@@ -929,7 +929,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-skill-tree"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1595,7 +1595,7 @@ checksum = "fa8f3741c7372e75519bd9346068370c9cdaabcc1f9599cbcf2a2719352286b7"
 
 [[package]]
 name = "skill-tree"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "anyhow",
  "clap",
