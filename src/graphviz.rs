@@ -36,13 +36,20 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     writeln!(output, r#"node [ fontsize="16", shape = "ellipse" ];"#)?;
     writeln!(output, r#"edge [ ];"#)?;
 
-    for group in tree.groups() {
-        writeln!(output, r#""{}" ["#, group.name)?;
-        write_group_label(tree, group, output)?;
-        writeln!(output, r#"  shape = "none""#)?;
-        writeln!(output, r#"  margin = 0"#)?;
-        writeln!(output, r#"]"#)?;
+    if let Some(clusters) = &tree.cluster {
+        for cluster in clusters {
+            let cluster_name = format!("cluster_{}", cluster.name);
+            writeln!(
+                output,
+                r#"subgraph {cluster_name} {{"#,
+                cluster_name = cluster_name
+            )?;
+            writeln!(output, r#"    label="{}";"#, cluster.label)?;
+            write_cluster(tree, output, Some(&cluster.name))?;
+            writeln!(output, r#"}}"#)?;
+        }
     }
+    write_cluster(tree, output, None)?;
 
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
@@ -53,6 +60,24 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     }
 
     writeln!(output, r#"}}"#)?;
+}
+
+#[throws(anyhow::Error)]
+fn write_cluster(tree: &SkillTree, output: &mut dyn Write, cluster: Option<&String>) {
+    for group in tree.groups() {
+        // If we are doing a cluster, the group must be in it;
+        // otherwise, the group must not be in any cluster.
+        match (&group.cluster, cluster) {
+            (None, None) => {}
+            (Some(c1), Some(c2)) if c1 == c2 => {}
+            _ => continue,
+        }
+        writeln!(output, r#""{}" ["#, group.name)?;
+        write_group_label(tree, group, output)?;
+        writeln!(output, r#"  shape = "none""#)?;
+        writeln!(output, r#"  margin = 0"#)?;
+        writeln!(output, r#"]"#)?;
+    }
 }
 
 const WATCH_EMOJI: &str = "⌚";
