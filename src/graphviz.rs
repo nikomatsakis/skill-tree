@@ -132,7 +132,7 @@ fn write_group_label(tree: &SkillTree, group: &Group, output: &mut dyn Write) {
 
     for item in &group.items {
         let item_status = Status::Unassigned; // XXX
-        let (_emoji, fontcolor, mut start_tag, mut end_tag) = match item_status {
+        let (_emoji, _fontcolor, mut start_tag, mut end_tag) = match item_status {
             Status::Blocked => (
                 WATCH_EMOJI,
                 None,

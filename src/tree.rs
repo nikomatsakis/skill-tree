@@ -1,6 +1,9 @@
 use fehler::throws;
 use serde_derive::Deserialize;
-use std::{collections::HashMap, path::Path};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 #[derive(Debug, Deserialize)]
 pub struct SkillTree {
@@ -20,6 +23,7 @@ pub struct Doc {
     pub columns: Vec<String>,
     pub defaults: Option<HashMap<String, String>>,
     pub emoji: Option<HashMap<String, EmojiMap>>,
+    pub include: Option<Vec<PathBuf>>,
 }
 
 pub type EmojiMap = HashMap<String, String>;
@@ -71,10 +75,60 @@ pub enum Status {
 }
 
 impl SkillTree {
-    #[throws(anyhow::Error)]
-    pub fn load(path: &Path) -> SkillTree {
+    pub fn load(path: &Path) -> anyhow::Result<SkillTree> {
         let skill_tree_text = std::fs::read_to_string(path)?;
-        Self::parse(&skill_tree_text)?
+        let mut tree = Self::parse(&skill_tree_text)?;
+        tree.import(path)?;
+        Ok(tree)
+    }
+
+    fn import(&mut self, root_path: &Path) -> anyhow::Result<()> {
+        if let Some(doc) = &mut self.doc {
+            if let Some(include) = &mut doc.include {
+                let include = include.clone();
+                for include_path in include {
+                    let tree_path = root_path.parent().unwrap().join(&include_path);
+                    let mut toml: SkillTree = SkillTree::load(&tree_path)?;
+
+                    // merge columns, and any defaults/emojis associated with the new columns
+                    let self_doc = self.doc.get_or_insert(Doc::default());
+                    let toml_doc = toml.doc.get_or_insert(Doc::default());
+                    for column in &toml_doc.columns {
+                        let columns = &mut self_doc.columns;
+                        if !columns.contains(column) {
+                            columns.push(column.clone());
+
+                            if let Some(value) =
+                                toml_doc.emoji.get_or_insert(HashMap::default()).get(column)
+                            {
+                                self_doc
+                                    .emoji
+                                    .get_or_insert(HashMap::default())
+                                    .insert(column.clone(), value.clone());
+                            }
+
+                            if let Some(value) = toml_doc
+                                .defaults
+                                .get_or_insert(HashMap::default())
+                                .get(column)
+                            {
+                                self_doc
+                                    .defaults
+                                    .get_or_insert(HashMap::default())
+                                    .insert(column.clone(), value.clone());
+                            }
+                        }
+                    }
+
+                    self.group.extend(toml.group.into_iter());
+
+                    self.cluster
+                        .get_or_insert(vec![])
+                        .extend(toml.cluster.into_iter().flatten());
+                }
+            }
+        }
+        Ok(())
     }
 
     #[throws(anyhow::Error)]
