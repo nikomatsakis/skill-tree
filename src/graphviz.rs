@@ -54,7 +54,7 @@ fn write_graphviz(tree: &SkillTree, output: &mut dyn Write) {
     for group in tree.groups() {
         if let Some(requires) = &group.requires {
             for requirement in requires {
-                writeln!(output, r#""{}" -> "{}";"#, requirement, &group.name)?;
+                writeln!(output, r#""{}" -> "{}";"#, &group.name, requirement)?;
             }
         }
     }
