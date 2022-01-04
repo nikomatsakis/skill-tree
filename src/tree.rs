@@ -1,13 +1,14 @@
+use anyhow::Context;
 use fehler::throws;
 use serde_derive::Deserialize;
 use std::{
-    collections::HashMap,
+    collections::{HashMap, HashSet},
     path::{Path, PathBuf},
 };
 
 #[derive(Debug, Deserialize)]
 pub struct SkillTree {
-    pub group: Vec<Group>,
+    pub group: Option<Vec<Group>>,
     pub cluster: Option<Vec<Cluster>>,
     pub graphviz: Option<Graphviz>,
     pub doc: Option<Doc>,
@@ -20,7 +21,7 @@ pub struct Graphviz {
 
 #[derive(Default, Debug, Deserialize)]
 pub struct Doc {
-    pub columns: Vec<String>,
+    pub columns: Option<Vec<String>>,
     pub defaults: Option<HashMap<String, String>>,
     pub emoji: Option<HashMap<String, EmojiMap>>,
     pub include: Option<Vec<PathBuf>>,
@@ -36,7 +37,7 @@ pub struct Cluster {
     pub style: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Group {
     pub name: String,
     pub cluster: Option<String>,
@@ -76,25 +77,39 @@ pub enum Status {
 
 impl SkillTree {
     pub fn load(path: &Path) -> anyhow::Result<SkillTree> {
-        let skill_tree_text = std::fs::read_to_string(path)?;
-        let mut tree = Self::parse(&skill_tree_text)?;
-        tree.import(path)?;
-        Ok(tree)
+        let loaded = &mut HashSet::default();
+        loaded.insert(path.to_owned());
+        Self::load_included_path(path, loaded)
     }
 
-    fn import(&mut self, root_path: &Path) -> anyhow::Result<()> {
+    fn load_included_path(path: &Path, loaded: &mut HashSet<PathBuf>) -> anyhow::Result<SkillTree> {
+        fn load(path: &Path, loaded: &mut HashSet<PathBuf>) -> anyhow::Result<SkillTree> {
+            let skill_tree_text = std::fs::read_to_string(path)?;
+            let mut tree = SkillTree::parse(&skill_tree_text)?;
+            tree.import(path, loaded)?;
+            Ok(tree)
+        }
+
+        load(path, loaded).with_context(|| format!("loading skill tree from `{}`", path.display()))
+    }
+
+    fn import(&mut self, root_path: &Path, loaded: &mut HashSet<PathBuf>) -> anyhow::Result<()> {
         if let Some(doc) = &mut self.doc {
             if let Some(include) = &mut doc.include {
                 let include = include.clone();
                 for include_path in include {
+                    if !loaded.insert(include_path.clone()) {
+                        continue;
+                    }
+
                     let tree_path = root_path.parent().unwrap().join(&include_path);
-                    let mut toml: SkillTree = SkillTree::load(&tree_path)?;
+                    let mut toml: SkillTree = SkillTree::load_included_path(&tree_path, loaded)?;
 
                     // merge columns, and any defaults/emojis associated with the new columns
                     let self_doc = self.doc.get_or_insert(Doc::default());
                     let toml_doc = toml.doc.get_or_insert(Doc::default());
-                    for column in &toml_doc.columns {
-                        let columns = &mut self_doc.columns;
+                    for column in toml_doc.columns.get_or_insert(vec![]).iter() {
+                        let columns = self_doc.columns.get_or_insert(vec![]);
                         if !columns.contains(column) {
                             columns.push(column.clone());
 
@@ -120,7 +135,9 @@ impl SkillTree {
                         }
                     }
 
-                    self.group.extend(toml.group.into_iter());
+                    self.group
+                        .get_or_insert(vec![])
+                        .extend(toml.groups().cloned());
 
                     self.cluster
                         .get_or_insert(vec![])
@@ -140,26 +157,31 @@ impl SkillTree {
     pub fn validate(&self) {
         // gather: valid requires entries
 
-        for group in &self.group {
+        for group in self.groups() {
             group.validate(self)?;
         }
     }
 
     pub fn groups(&self) -> impl Iterator<Item = &Group> {
-        self.group.iter()
+        match self.group {
+            Some(ref g) => g.iter(),
+            None => [].iter(),
+        }
     }
 
     pub fn group_named(&self, name: &str) -> Option<&Group> {
-        self.group.iter().find(|g| g.name == name)
+        self.groups().find(|g| g.name == name)
     }
 
     /// Returns the expected column titles for each item (excluding the label).
     pub fn columns(&self) -> &[String] {
         if let Some(doc) = &self.doc {
-            &doc.columns
-        } else {
-            &[]
+            if let Some(columns) = &doc.columns {
+                return columns;
+            }
         }
+
+        &[]
     }
 
     /// Translates an "input" into an emoji, returning "input" if not found.
