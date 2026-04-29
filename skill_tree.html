@@ -1,16 +1,18 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Skill Tree - Skill-tree Book</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
@@ -19,33 +21,45 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
         <link rel="stylesheet" href="skill-tree.css">
-        
 
-        
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
     </head>
     <body>
-        <!-- Provide site root to javascript -->
-        <script type="text/javascript">
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
-        </script>
-
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -58,61 +72,71 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
-            var theme;
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('no-js')
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            html.classList.add("js");
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="skill_tree.html" class="active"><strong aria-hidden="true">1.</strong> Skill Tree</a></li></ol>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Skill-tree Book</h1>
@@ -121,14 +145,18 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -136,10 +164,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -149,297 +176,294 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#skill-tree" id="skill-tree">Skill Tree</a></h1>
-<p>The &quot;skill tree&quot; package is a tool that you can use to plot out your overall trajectory. It is meant to be really easily integrated into <code>mdbook</code> but also usable stand-alone.</p>
-<h2><a class="header" href="#parts-of-a-skill-tree" id="parts-of-a-skill-tree">Parts of a skill tree</a></h2>
+                        <h1 id="skill-tree"><a class="header" href="#skill-tree">Skill Tree</a></h1>
+<p>The "skill tree" package is a tool that you can use to plot out your overall trajectory. It is meant to be really easily integrated into <code>mdbook</code> but also usable stand-alone.</p>
+<h2 id="parts-of-a-skill-tree"><a class="header" href="#parts-of-a-skill-tree">Parts of a skill tree</a></h2>
 <ul>
 <li>Groups</li>
 <li>Items</li>
 </ul>
-<h2><a class="header" href="#example" id="example">Example</a></h2>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
 <p>Here is an example of what a skill tree looks like. Check out <a href="https://github.com/nikomatsakis/skill-tree/tree/master/example-trees/avd.toml">the source on github</a>.</p>
 <pre><code>[graphviz]
-rankdir = &quot;TD&quot;
+rankdir = "TD"
 
 [doc]
-columns = [&quot;status&quot;, &quot;assigned&quot;]
+columns = ["status", "assigned"]
 
 [doc.defaults]
-status = &quot;tbd&quot;
-assigned = &quot;no&quot;
+status = "tbd"
+assigned = "no"
 
 [doc.emoji.status]
-&quot;tbd&quot; = &quot;▯▯▯▯▯&quot;
-&quot;exploration&quot; = &quot;▮▯▯▯▯&quot;
-&quot;design&quot; = &quot;▮▮▯▯▯&quot;
-&quot;implementation&quot; = &quot;▮▮▮▯▯&quot;
-&quot;stabilization&quot; = &quot;▮▮▮▮▯&quot;
-&quot;done&quot; = &quot;▮▮▮▮▮&quot;
+"tbd" = "▯▯▯▯▯"
+"exploration" = "▮▯▯▯▯"
+"design" = "▮▮▯▯▯"
+"implementation" = "▮▮▮▯▯"
+"stabilization" = "▮▮▮▮▯"
+"done" = "▮▮▮▮▮"
 
 [doc.emoji.assigned]
-&quot;no&quot; = &quot;✋&quot;
-&quot;yes&quot; = &quot;✍️&quot;
-&quot;blocked&quot; = &quot;🛑&quot;
-# &quot;niko&quot; = &quot;&lt;img src='https://avatars.githubusercontent.com/u/155238?s=40&amp;v=4'/&gt;&quot;
+"no" = "✋"
+"yes" = "✍️"
+"blocked" = "🛑"
+# "niko" = "&lt;img src='https://avatars.githubusercontent.com/u/155238?s=40&amp;v=4'/&gt;"
 
 
 [[group]]
-name = &quot;async-traits&quot;
-label = &quot;Async traits are possible&quot;
+name = "async-traits"
+label = "Async traits are possible"
 description = [
-  &quot;Possible to write async abstractions using traits&quot;,
-  &quot;Working with dyn-safety requires careful work&quot;,
+  "Possible to write async abstractions using traits",
+  "Working with dyn-safety requires careful work",
 ]
 items = [
-  { label = &quot;Type alias impl Trait&quot;, status = &quot;implementation&quot; },
-  { label = &quot;Generic associated types&quot;, status = &quot;implementation&quot; },
+  { label = "Type alias impl Trait", status = "implementation" },
+  { label = "Generic associated types", status = "implementation" },
 ]
 
 [[group]]
-name = &quot;async-fn-everywhere&quot;
-label = &quot;Async fn everywhere&quot;
+name = "async-fn-everywhere"
+label = "Async fn everywhere"
 description = [
-  &quot;Write async fn anywhere you can write fn&quot;,
-  &quot;Write async closures anywhere you can write sync closures&quot;,
+  "Write async fn anywhere you can write fn",
+  "Write async closures anywhere you can write sync closures",
 ]
 requires = [
-  &quot;async-traits&quot;,
+  "async-traits",
 ]
 items = [
-  { label = &quot;Support for `dyn Trait` where `Trait` has async fn&quot;, status = &quot;design&quot; },
-  { label = &quot;Async fn sugar in traits&quot;, status = &quot;design&quot;, assigned = &quot;niko&quot; },
-  { label = &quot;Async closure support&quot;, status = &quot;design&quot;, assigned = &quot;blocked&quot; },
-  { label = &quot;Boxable, recursive async fn&quot;, status = &quot;design&quot; },
+  { label = "Support for `dyn Trait` where `Trait` has async fn", status = "design" },
+  { label = "Async fn sugar in traits", status = "design", assigned = "niko" },
+  { label = "Async closure support", status = "design", assigned = "blocked" },
+  { label = "Boxable, recursive async fn", status = "design" },
 ]
 
 [[group]]
-name = &quot;async-iter&quot;
-label = &quot;Async iteration is awesome&quot;
+name = "async-iter"
+label = "Async iteration is awesome"
 description = [
-  &quot;Use async iterators as easily as sync iterators&quot;,
-  &quot;Write async and sync iterators with equal ease&quot;,
+  "Use async iterators as easily as sync iterators",
+  "Write async and sync iterators with equal ease",
 ]
 requires = [
-  &quot;async-fn-everywhere&quot;,
+  "async-fn-everywhere",
 ]
 items = [
-  { label = &quot;AsyncIterator trait&quot;, status = &quot;implementation&quot; },
-  { label = &quot;Common combinators on AsyncIterator&quot;, status = &quot;implementation&quot;, assigned = &quot;blocked&quot; },
-  { label = &quot;Generators (both sync and async)&quot;, status = &quot;design&quot;, assigned = &quot;yes&quot; },
-  { label = &quot;Easy conversion of sync iter to async iter&quot;, status = &quot;design&quot;, assigned = &quot;blocked&quot; },
+  { label = "AsyncIterator trait", status = "implementation" },
+  { label = "Common combinators on AsyncIterator", status = "implementation", assigned = "blocked" },
+  { label = "Generators (both sync and async)", status = "design", assigned = "yes" },
+  { label = "Easy conversion of sync iter to async iter", status = "design", assigned = "blocked" },
 ]
 
 [[group]]
-name = &quot;async-read-and-write&quot;
-label = &quot;Async read and write are a pleasure to use&quot;
+name = "async-read-and-write"
+label = "Async read and write are a pleasure to use"
 description = [
-  &quot;Easy to pass around interoperable readers and writers&quot;,
-  &quot;Easy to impl AsyncRead and AsyncWrite traits&quot;,
-  &quot;Easy to write adapters that wrap async read and async write&quot;,
+  "Easy to pass around interoperable readers and writers",
+  "Easy to impl AsyncRead and AsyncWrite traits",
+  "Easy to write adapters that wrap async read and async write",
 ]
 requires = [
-  &quot;async-fn-everywhere&quot;,
+  "async-fn-everywhere",
 ]
 items = [
-  { label = &quot;AsyncRead trait in std&quot;, status = &quot;implementation&quot; },
-  { label = &quot;AsyncWrite trait in std&quot;, status = &quot;implementation&quot; },
-  { label = &quot;TBD: some way to write poll fns easily&quot;, status = &quot;exploration&quot; },
+  { label = "AsyncRead trait in std", status = "implementation" },
+  { label = "AsyncWrite trait in std", status = "implementation" },
+  { label = "TBD: some way to write poll fns easily", status = "exploration" },
 ]
 
 [[group]]
-name = &quot;portability-is-possible&quot;
-label = &quot;Portability across runtimes is possible&quot;
+name = "portability-is-possible"
+label = "Portability across runtimes is possible"
 description = [
-  &quot;Grab a library from crates.io and&lt;br/&gt;it works with your chosen runtime,&lt;br/&gt;as long as the author does a good job&quot;,
-  &quot;Possible to author libraries&lt;br/&gt;that can be used with many runtimes,&lt;br/&gt;but requires careful use of traits&quot;,
-  &quot;Create a new runtime and have existing&lt;br/&gt;(portable) libraries work with no modifications&quot;,
+  "Grab a library from crates.io and&lt;br/&gt;it works with your chosen runtime,&lt;br/&gt;as long as the author does a good job",
+  "Possible to author libraries&lt;br/&gt;that can be used with many runtimes,&lt;br/&gt;but requires careful use of traits",
+  "Create a new runtime and have existing&lt;br/&gt;(portable) libraries work with no modifications",
 ]
 requires = [
-  &quot;async-iter&quot;,
-  &quot;async-read-and-write&quot;,
+  "async-iter",
+  "async-read-and-write",
 ]
 items = [
-  { label = &quot;Trait for spawning tasks&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Trait for spawning blocking tasks&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Trait for timers&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Common utilities like select, join, mutexes&quot;, status = &quot;design&quot; },
+  { label = "Trait for spawning tasks", status = "exploration" },
+  { label = "Trait for spawning blocking tasks", status = "exploration" },
+  { label = "Trait for timers", status = "exploration" },
+  { label = "Common utilities like select, join, mutexes", status = "design" },
 ]
 
 [[group]]
-name = &quot;getting-started&quot;
-label = &quot;Getting started in async Rust is a smooth experience&quot;
+name = "getting-started"
+label = "Getting started in async Rust is a smooth experience"
 description = [
-  &quot;Easy to find, quality resources for learning async Rust&quot;,
-  &quot;Use Tcp Streams and other constructs without baking in a specific runtime or implementation&quot;,
-  &quot;Use Tcp Streams without threading generics all throughout your code&quot;,
-  &quot;Compiler and error messages help you avoid common mistakes&quot;,
-  &quot;Design patterns are well known&quot;,
+  "Easy to find, quality resources for learning async Rust",
+  "Use Tcp Streams and other constructs without baking in a specific runtime or implementation",
+  "Use Tcp Streams without threading generics all throughout your code",
+  "Compiler and error messages help you avoid common mistakes",
+  "Design patterns are well known",
 ]
 requires = [
-  &quot;portability-is-possible&quot;,
+  "portability-is-possible",
 ]
 items = [
-  { label = &quot;Improve async book structure&quot;, status = &quot;implementation&quot; },
-  { label = &quot;Lint for blocking functions in an async context&quot;, status = &quot;design&quot; },
-  { label = &quot;Lint holding things over an await that should not be held over an await&quot;, status = &quot;implementation&quot; },
-  { label = &quot;Work on identifying common design patterns&quot;, status = &quot;implementation&quot; },
+  { label = "Improve async book structure", status = "implementation" },
+  { label = "Lint for blocking functions in an async context", status = "design" },
+  { label = "Lint holding things over an await that should not be held over an await", status = "implementation" },
+  { label = "Work on identifying common design patterns", status = "implementation" },
 ]
 
 [[group]]
-name = &quot;resolving-problems&quot;
-label = &quot;Resolving problems in running applications is easy&quot;
+name = "resolving-problems"
+label = "Resolving problems in running applications is easy"
 description = [
-  &quot;Using a debugger with Rust basically works&quot;,
-  &quot;Find out what tasks your program currently has&quot;,
-  &quot;Show why tasks are blocked&quot;,
-  &quot;Detect common pitfalls and async hazards&quot;,
+  "Using a debugger with Rust basically works",
+  "Find out what tasks your program currently has",
+  "Show why tasks are blocked",
+  "Detect common pitfalls and async hazards",
 ]
 requires = [
-  &quot;getting-started&quot;,
+  "getting-started",
 ]
 items = [
-  { label = &quot;Better debuginfo&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Runtime Debugger interface&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Runtime bug detectors&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Improve async book structure&quot;, status = &quot;implementation&quot; },
-  { label = &quot;Work on identifying common design patterns&quot;, status = &quot;implementation&quot; },
+  { label = "Better debuginfo", status = "exploration" },
+  { label = "Runtime Debugger interface", status = "exploration" },
+  { label = "Runtime bug detectors", status = "exploration" },
+  { label = "Improve async book structure", status = "implementation" },
+  { label = "Work on identifying common design patterns", status = "implementation" },
 ]
 
 [[group]]
-name = &quot;performance-tooling&quot;
-label = &quot;Me make Rust FAST&quot;
+name = "performance-tooling"
+label = "Me make Rust FAST"
 description = [
-  &quot;Profiles of specific tasks (heap, memory, etc)&quot;,
-  &quot;Long-running sequential loops are easy to find and remedy&quot;,
-  &quot;Overall profiles&quot;,
+  "Profiles of specific tasks (heap, memory, etc)",
+  "Long-running sequential loops are easy to find and remedy",
+  "Overall profiles",
 ]
 requires = [
-  &quot;resolving-problems&quot;
+  "resolving-problems"
 ]
 items = [
-  { label = &quot;Lint for functions that will take too long to execute&quot;, status = &quot;design&quot; },
-  { label = &quot;Runtime warnings in debug mode&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Profiler-guided lints&quot;, status = &quot;design&quot; },
-  { label = &quot;Combinators and hooks to make it easy to yield in long-running loops&quot;, status = &quot;exploration&quot;  },
-  { label = &quot;Highly optimized `spawn_blocking`&quot;, status = &quot;exploration&quot;  },
-  { label = &quot;Turbowish profiler support&quot;, status = &quot;design&quot; },
+  { label = "Lint for functions that will take too long to execute", status = "design" },
+  { label = "Runtime warnings in debug mode", status = "exploration" },
+  { label = "Profiler-guided lints", status = "design" },
+  { label = "Combinators and hooks to make it easy to yield in long-running loops", status = "exploration"  },
+  { label = "Highly optimized `spawn_blocking`", status = "exploration"  },
+  { label = "Turbowish profiler support", status = "design" },
 ]
 [[group]]
-name = &quot;async-raii&quot;
-label = &quot;Easily manage async cleanup&quot;
+name = "async-raii"
+label = "Easily manage async cleanup"
 description = [
-  &quot;Add an async drop and be confident that it will be invoked without effort&quot;,
-  &quot;Reliably detect cases where sync drop might be used instead&quot;,
+  "Add an async drop and be confident that it will be invoked without effort",
+  "Reliably detect cases where sync drop might be used instead",
 ]
 requires = [
-  &quot;async-traits&quot;,
+  "async-traits",
 ]
 items = [
-  { label = &quot;Ability to write an async disposal method&quot;, status = &quot;design&quot;, assigned = &quot;blocked&quot; },
-  { label = &quot;Lint for sync dropping when there's async drop&quot;, status = &quot;design&quot; },
+  { label = "Ability to write an async disposal method", status = "design", assigned = "blocked" },
+  { label = "Lint for sync dropping when there's async drop", status = "design" },
 ]
 
 # [[group]]
-# name = &quot;first-class-learning-experience&quot;
-# label = &quot;First-class learning experience&quot;
+# name = "first-class-learning-experience"
+# label = "First-class learning experience"
 # description = [
-#   &quot;When async doesn't work as I expect &lt;br/&gt; (whether at compilation time, runtime, debugging)...&quot;,
-#   &quot;something identifies the problem&quot;,
-#   &quot;something explains the problem&quot;,
-#   &quot;something proposes solutions&quot;,
-#   &quot;after reading the explanation and the solutions, &lt;br/&gt; I understand what I did wrong&quot;,
+#   "When async doesn't work as I expect &lt;br/&gt; (whether at compilation time, runtime, debugging)...",
+#   "something identifies the problem",
+#   "something explains the problem",
+#   "something proposes solutions",
+#   "after reading the explanation and the solutions, &lt;br/&gt; I understand what I did wrong",
 # ]
 # requires = [
-#   &quot;resolving-problems&quot;,
-#   &quot;performance-tooling&quot;,
+#   "resolving-problems",
+#   "performance-tooling",
 # ]
 # items = [
-#   { label = &quot;Cross-referencing between docs, lints, errors, and so forth&quot;, status = &quot;exploration&quot;  },
+#   { label = "Cross-referencing between docs, lints, errors, and so forth", status = "exploration"  },
 # ]
 
 [[group]]
-name = &quot;portability-across-send&quot;
-label = &quot;Portability across Send&quot;
+name = "portability-across-send"
+label = "Portability across Send"
 description = [
-  &quot;write code that can be Send or not-Send at zero-cost (e.g., use Rc vs Arc)&quot;,
+  "write code that can be Send or not-Send at zero-cost (e.g., use Rc vs Arc)",
 ]
 requires = [
-  &quot;portability-is-possible&quot;,
+  "portability-is-possible",
 ]
 items = [
-  { label = &quot;associated traits&quot;, status = &quot;tbd&quot; },
-  { label = &quot;module-level generics&quot;, status = &quot;tbd&quot; },
+  { label = "associated traits", status = "tbd" },
+  { label = "module-level generics", status = "tbd" },
 ]
 
 [[group]]
-name = &quot;ffcf&quot;
-label = &quot;If it compiles, it works&quot;
+name = "ffcf"
+label = "If it compiles, it works"
 description = [
-    &quot;Bugs are generally logic bugs, not a result of surprising async mechanisms&quot;,
-    &quot;Easy to create parallelism operating on borrowed data&quot;,
-    &quot;When tasks are no longer needed, they can be reliably canceled&quot;,
-    &quot;It is easy to visualize your program's task structure&quot;,
+    "Bugs are generally logic bugs, not a result of surprising async mechanisms",
+    "Easy to create parallelism operating on borrowed data",
+    "When tasks are no longer needed, they can be reliably canceled",
+    "It is easy to visualize your program's task structure",
 ]
 requires = [
-  &quot;async-raii&quot;,
-  &quot;getting-started&quot;,
+  "async-raii",
+  "getting-started",
 ]
 items = [
-  { label = &quot;Way to avoid tasks being dropped unexpectedly while they continue to execute&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Mechanism for launching tasks within those scopes that can reference borrowed data&quot;, status = &quot;design&quot;, assigned = &quot;blocked&quot; },
-  { label = &quot;Hierarchical structure for tasks with cancelation propagation&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Lint when potentially canceling 'futures not known to be cancel safe'&quot;, status = &quot;exploration&quot; },
-  { label = &quot;Integration into the visualization infrastructure and debug tools&quot;, status = &quot;design&quot;, assigned = &quot;blocked&quot; },
+  { label = "Way to avoid tasks being dropped unexpectedly while they continue to execute", status = "exploration" },
+  { label = "Mechanism for launching tasks within those scopes that can reference borrowed data", status = "design", assigned = "blocked" },
+  { label = "Hierarchical structure for tasks with cancelation propagation", status = "exploration" },
+  { label = "Lint when potentially canceling 'futures not known to be cancel safe'", status = "exploration" },
+  { label = "Integration into the visualization infrastructure and debug tools", status = "design", assigned = "blocked" },
 ]
 
 [[group]]
-name = &quot;zero-copy&quot;
-label = &quot;Zero copy works beautifully&quot;
+name = "zero-copy"
+label = "Zero copy works beautifully"
 description = [
-  &quot;permit zero copy&quot;,
+  "permit zero copy",
 ]
 requires = [
-  &quot;ffcf&quot;,
+  "ffcf",
 ]
 items = [
-  { label = &quot;TBD&quot; },
+  { label = "TBD" },
 ]
 
 [[group]]
-name = &quot;testing&quot;
-label = &quot;Testing your async code is easy&quot;
+name = "testing"
+label = "Testing your async code is easy"
 description = [
-  &quot;Testing async code does not require a lot of pre-planning&quot;,
-  &quot;You can easily test connection errors, delays, and other corner cases&quot;,
+  "Testing async code does not require a lot of pre-planning",
+  "You can easily test connection errors, delays, and other corner cases",
 ]
 requires = [
-  &quot;getting-started&quot;,
+  "getting-started",
 ]
 items = [
-  { label = &quot;Ability to fire timers programmatically (mock time)&quot; },
-  { label = &quot;`run_until_stalled`&quot; },
-  { label = &quot;Mock sockets and file objects?&quot; },
-  { label = &quot;Inject errors or long delays&quot; },
-  { label = &quot;Inject fake objects for real ones without modifying your code&quot; },
+  { label = "Ability to fire timers programmatically (mock time)" },
+  { label = "`run_until_stalled`" },
+  { label = "Mock sockets and file objects?" },
+  { label = "Inject errors or long delays" },
+  { label = "Inject fake objects for real ones without modifying your code" },
 ]
 
 
 # How to record out of scope things?
 
 </code></pre>
-<p>Here is how it looks in rendered form:</p>
-<div id='skill-tree-0'></div>
+<p>Here is how it looks in rendered form:<div id='skill-tree-0'></div></p>
 <script>
                     if (!window.SKILL_TREES) window.SKILL_TREES = [];
-                    window.SKILL_TREES.push({id:'skill-tree-0', value:{"dot_text":"digraph g {\ngraph [ rankdir = \"TD\" ];\nnode [ fontsize=\"16\", shape = \"ellipse\" ];\nedge [ ];\n\"async-traits\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async traits are possible</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Possible to write async abstractions using traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Working with dyn-safety requires careful work</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Type alias impl Trait</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Generic associated types</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-fn-everywhere\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async fn everywhere</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async fn anywhere you can write fn</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async closures anywhere you can write sync closures</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Support for `dyn Trait` where `Trait` has async fn</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">niko</td><td bgcolor=\"cornsilk\">Async fn sugar in traits</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Async closure support</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Boxable, recursive async fn</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-iter\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async iteration is awesome</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use async iterators as easily as sync iterators</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async and sync iterators with equal ease</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncIterator trait</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Common combinators on AsyncIterator</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✍️</td><td bgcolor=\"cornsilk\">Generators (both sync and async)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Easy conversion of sync iter to async iter</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-read-and-write\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async read and write are a pleasure to use</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to pass around interoperable readers and writers</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to impl AsyncRead and AsyncWrite traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to write adapters that wrap async read and async write</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncRead trait in std</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncWrite trait in std</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">TBD: some way to write poll fns easily</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"portability-is-possible\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Portability across runtimes is possible</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Grab a library from crates.io and<br/>it works with your chosen runtime,<br/>as long as the author does a good job</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Possible to author libraries<br/>that can be used with many runtimes,<br/>but requires careful use of traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Create a new runtime and have existing<br/>(portable) libraries work with no modifications</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for spawning tasks</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for spawning blocking tasks</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for timers</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Common utilities like select, join, mutexes</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"getting-started\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Getting started in async Rust is a smooth experience</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to find, quality resources for learning async Rust</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use Tcp Streams and other constructs without baking in a specific runtime or implementation</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use Tcp Streams without threading generics all throughout your code</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Compiler and error messages help you avoid common mistakes</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Design patterns are well known</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Improve async book structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for blocking functions in an async context</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint holding things over an await that should not be held over an await</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Work on identifying common design patterns</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"resolving-problems\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Resolving problems in running applications is easy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Using a debugger with Rust basically works</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Find out what tasks your program currently has</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Show why tasks are blocked</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Detect common pitfalls and async hazards</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Better debuginfo</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime Debugger interface</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime bug detectors</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Improve async book structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Work on identifying common design patterns</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"performance-tooling\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Me make Rust FAST</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Profiles of specific tasks (heap, memory, etc)</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Long-running sequential loops are easy to find and remedy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Overall profiles</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for functions that will take too long to execute</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime warnings in debug mode</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Profiler-guided lints</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Combinators and hooks to make it easy to yield in long-running loops</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Highly optimized `spawn_blocking`</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Turbowish profiler support</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-raii\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Easily manage async cleanup</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Add an async drop and be confident that it will be invoked without effort</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Reliably detect cases where sync drop might be used instead</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Ability to write an async disposal method</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for sync dropping when there's async drop</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"portability-across-send\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Portability across Send</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">write code that can be Send or not-Send at zero-cost (e.g., use Rc vs Arc)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">associated traits</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">module-level generics</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"ffcf\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">If it compiles, it works</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Bugs are generally logic bugs, not a result of surprising async mechanisms</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to create parallelism operating on borrowed data</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">When tasks are no longer needed, they can be reliably canceled</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">It is easy to visualize your program's task structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Way to avoid tasks being dropped unexpectedly while they continue to execute</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Mechanism for launching tasks within those scopes that can reference borrowed data</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Hierarchical structure for tasks with cancelation propagation</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint when potentially canceling 'futures not known to be cancel safe'</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Integration into the visualization infrastructure and debug tools</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"zero-copy\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Zero copy works beautifully</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">permit zero copy</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">TBD</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"testing\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Testing your async code is easy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Testing async code does not require a lot of pre-planning</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">You can easily test connection errors, delays, and other corner cases</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Ability to fire timers programmatically (mock time)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">`run_until_stalled`</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Mock sockets and file objects?</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Inject errors or long delays</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Inject fake objects for real ones without modifying your code</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-fn-everywhere\" -> \"async-traits\";\n\"async-iter\" -> \"async-fn-everywhere\";\n\"async-read-and-write\" -> \"async-fn-everywhere\";\n\"portability-is-possible\" -> \"async-iter\";\n\"portability-is-possible\" -> \"async-read-and-write\";\n\"getting-started\" -> \"portability-is-possible\";\n\"resolving-problems\" -> \"getting-started\";\n\"performance-tooling\" -> \"resolving-problems\";\n\"async-raii\" -> \"async-traits\";\n\"portability-across-send\" -> \"portability-is-possible\";\n\"ffcf\" -> \"async-raii\";\n\"ffcf\" -> \"getting-started\";\n\"zero-copy\" -> \"ffcf\";\n\"testing\" -> \"getting-started\";\n}\n","error":""}});
+                    window.SKILL_TREES.push({id:'skill-tree-0', value:{"dot_text":"digraph g {\ngraph [ rankdir = \"TD\" ];\nnode [ fontsize=\"16\", shape = \"ellipse\" ];\nedge [ ];\n\"async-traits\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async traits are possible</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Possible to write async abstractions using traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Working with dyn-safety requires careful work</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Type alias impl Trait</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Generic associated types</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-fn-everywhere\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async fn everywhere</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async fn anywhere you can write fn</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async closures anywhere you can write sync closures</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Support for `dyn Trait` where `Trait` has async fn</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">niko</td><td bgcolor=\"cornsilk\">Async fn sugar in traits</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Async closure support</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Boxable, recursive async fn</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-iter\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async iteration is awesome</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use async iterators as easily as sync iterators</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Write async and sync iterators with equal ease</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncIterator trait</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Common combinators on AsyncIterator</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✍️</td><td bgcolor=\"cornsilk\">Generators (both sync and async)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Easy conversion of sync iter to async iter</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-read-and-write\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Async read and write are a pleasure to use</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to pass around interoperable readers and writers</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to impl AsyncRead and AsyncWrite traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to write adapters that wrap async read and async write</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncRead trait in std</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">AsyncWrite trait in std</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">TBD: some way to write poll fns easily</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"portability-is-possible\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Portability across runtimes is possible</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Grab a library from crates.io and<br/>it works with your chosen runtime,<br/>as long as the author does a good job</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Possible to author libraries<br/>that can be used with many runtimes,<br/>but requires careful use of traits</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Create a new runtime and have existing<br/>(portable) libraries work with no modifications</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for spawning tasks</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for spawning blocking tasks</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Trait for timers</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Common utilities like select, join, mutexes</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"getting-started\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Getting started in async Rust is a smooth experience</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to find, quality resources for learning async Rust</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use Tcp Streams and other constructs without baking in a specific runtime or implementation</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Use Tcp Streams without threading generics all throughout your code</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Compiler and error messages help you avoid common mistakes</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Design patterns are well known</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Improve async book structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for blocking functions in an async context</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint holding things over an await that should not be held over an await</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Work on identifying common design patterns</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"resolving-problems\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Resolving problems in running applications is easy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Using a debugger with Rust basically works</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Find out what tasks your program currently has</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Show why tasks are blocked</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Detect common pitfalls and async hazards</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Better debuginfo</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime Debugger interface</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime bug detectors</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Improve async book structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▮▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Work on identifying common design patterns</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"performance-tooling\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Me make Rust FAST</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Profiles of specific tasks (heap, memory, etc)</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Long-running sequential loops are easy to find and remedy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Overall profiles</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for functions that will take too long to execute</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Runtime warnings in debug mode</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Profiler-guided lints</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Combinators and hooks to make it easy to yield in long-running loops</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Highly optimized `spawn_blocking`</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Turbowish profiler support</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-raii\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Easily manage async cleanup</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Add an async drop and be confident that it will be invoked without effort</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Reliably detect cases where sync drop might be used instead</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Ability to write an async disposal method</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint for sync dropping when there's async drop</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"portability-across-send\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Portability across Send</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">write code that can be Send or not-Send at zero-cost (e.g., use Rc vs Arc)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">associated traits</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">module-level generics</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"ffcf\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">If it compiles, it works</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Bugs are generally logic bugs, not a result of surprising async mechanisms</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Easy to create parallelism operating on borrowed data</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">When tasks are no longer needed, they can be reliably canceled</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">It is easy to visualize your program's task structure</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Way to avoid tasks being dropped unexpectedly while they continue to execute</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Mechanism for launching tasks within those scopes that can reference borrowed data</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Hierarchical structure for tasks with cancelation propagation</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Lint when potentially canceling 'futures not known to be cancel safe'</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▮▮▯▯▯</td><td bgcolor=\"cornsilk\">🛑</td><td bgcolor=\"cornsilk\">Integration into the visualization infrastructure and debug tools</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"zero-copy\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Zero copy works beautifully</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">permit zero copy</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">TBD</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"testing\" [\n  label = <<table>\n    <tr><td bgcolor=\"darkgoldenrod\" colspan=\"3\">Testing your async code is easy</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">Testing async code does not require a lot of pre-planning</td></tr>\n    <tr><td bgcolor=\"darkgoldenrod1\" colspan=\"3\">You can easily test connection errors, delays, and other corner cases</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Ability to fire timers programmatically (mock time)</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">`run_until_stalled`</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Mock sockets and file objects?</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Inject errors or long delays</td></tr>\n    <tr><td bgcolor=\"cornsilk\">▯▯▯▯▯</td><td bgcolor=\"cornsilk\">✋</td><td bgcolor=\"cornsilk\">Inject fake objects for real ones without modifying your code</td></tr>\n  </table>>\n  shape = \"none\"\n  margin = 0\n]\n\"async-traits\" -> \"async-fn-everywhere\";\n\"async-fn-everywhere\" -> \"async-iter\";\n\"async-fn-everywhere\" -> \"async-read-and-write\";\n\"async-iter\" -> \"portability-is-possible\";\n\"async-read-and-write\" -> \"portability-is-possible\";\n\"portability-is-possible\" -> \"getting-started\";\n\"getting-started\" -> \"resolving-problems\";\n\"resolving-problems\" -> \"performance-tooling\";\n\"async-traits\" -> \"async-raii\";\n\"portability-is-possible\" -> \"portability-across-send\";\n\"async-raii\" -> \"ffcf\";\n\"getting-started\" -> \"ffcf\";\n\"ffcf\" -> \"zero-copy\";\n\"getting-started\" -> \"testing\";\n}\n","error":""}});
                     </script>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
 
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -447,49 +471,35 @@ items = [
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
 
-                
             </nav>
 
         </div>
 
-        
 
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
-        <script type="text/javascript" src="viz.js"></script>
-        
-        <script type="text/javascript" src="panzoom.min.js"></script>
-        
-        <script type="text/javascript" src="full.render.js"></script>
-        
-        <script type="text/javascript" src="skill-tree.js"></script>
-        
+        <script src="viz.js"></script>
+        <script src="panzoom.min.js"></script>
+        <script src="full.render.js"></script>
+        <script src="skill-tree.js"></script>
 
-        
 
+
+    </div>
     </body>
 </html>
